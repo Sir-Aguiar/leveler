@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RaidZombieDeathListener implements Listener {
@@ -25,6 +26,10 @@ public class RaidZombieDeathListener implements Listener {
 
   @EventHandler
   public void onDeath(EntityDeathEvent event) {
+    if (!(event.getEntity() instanceof Zombie)) {
+      return; // Ignora se não for um Zombie
+    }
+
     Zombie entity = (Zombie) event.getEntity();
 
     if (!entity.hasMetadata("isRaid")) {
@@ -47,6 +52,6 @@ public class RaidZombieDeathListener implements Listener {
 
   @EventHandler
   public void onJoin(PlayerJoinEvent event) {
-    Bukkit.getConsoleSender().sendMessage("Jogador entrou com sucesso");
+
   }
 }

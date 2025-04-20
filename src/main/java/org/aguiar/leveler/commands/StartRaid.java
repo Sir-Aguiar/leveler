@@ -30,7 +30,6 @@ public class StartRaid implements CommandExecutor {
 
     player.sendMessage("§aRaid iniciada! Cuidado com os zombies!");
 
-
     return true;
   }
 }

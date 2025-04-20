@@ -9,7 +9,7 @@ public class LevelerPlayerData {
   private float playerExperience;
   private UUID playerId;
 
-  public LevelerPlayerData(double playerLevel, float playerExperience, UUID playerId) {
+  public LevelerPlayerData(UUID playerId, double playerLevel, float playerExperience) {
     this.playerLevel = playerLevel;
     this.playerExperience = playerExperience;
     this.playerId = playerId;
