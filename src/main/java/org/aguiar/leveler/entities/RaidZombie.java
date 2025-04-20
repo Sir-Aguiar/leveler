@@ -40,8 +40,8 @@ public class RaidZombie {
     zombie.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
 
     zombie.setMetadata("isRaid", new FixedMetadataValue(plugin, true));
-    zombie.setMetadata("baseExperience", new FixedMetadataValue(plugin, 2.3));
-    zombie.setMetadata("level", new FixedMetadataValue(plugin, 1));
+    zombie.setMetadata("baseExperience", new FixedMetadataValue(plugin, 2.1f));
+    zombie.setMetadata("level", new FixedMetadataValue(plugin, 1.0f));
 
     return zombie;
   }
@@ -65,7 +65,7 @@ public class RaidZombie {
     zombie.getEquipment().setBoots(new ItemStack(Material.LEATHER_BOOTS));
 
     zombie.setMetadata("isRaid", new FixedMetadataValue(plugin, "true"));
-    zombie.setMetadata("baseExperience", new FixedMetadataValue(plugin, 1.2f));
+    zombie.setMetadata("baseExperience", new FixedMetadataValue(plugin, 1.1f));
     zombie.setMetadata("level", new FixedMetadataValue(plugin, 1.0f));
     return zombie;
   }
