@@ -21,7 +21,7 @@ public class StartRaid implements CommandExecutor {
       return false;
     }
 
-    RaidZombie raidZombies = new RaidZombie();
+    RaidZombie raidZombies = new RaidZombie(plugin);
     raidZombies.spawnBoss(player.getLocation().add(0, 0, 3));
     raidZombies.spawnWorker(player.getLocation().add(1, 0, 3));
     raidZombies.spawnWorker(player.getLocation().add(-1, 0, 3));
