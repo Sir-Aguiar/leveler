@@ -1,17 +1,20 @@
 package org.aguiar.leveler.commands;
 
+import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.entities.RaidZombie;
+import org.aguiar.leveler.utils.LevelerPlayerData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class StartRaid implements CommandExecutor {
-  private final Plugin plugin;
+  private final Leveler plugin;
+  private final LevelerPlayerData playerData;
 
-  public StartRaid(Plugin plugin) {
+  public StartRaid(Leveler plugin) {
     this.plugin = plugin;
+    this.playerData = plugin.playersData.get(player.getUniqueId().toString());
   }
 
   @Override
@@ -21,7 +24,8 @@ public class StartRaid implements CommandExecutor {
       return false;
     }
 
-    RaidZombie raidZombies = new RaidZombie(plugin);
+    RaidZombie raidZombies = new RaidZombie(plugin, playerData);
+
     raidZombies.spawnBoss(player.getLocation().add(0, 0, 3));
     raidZombies.spawnWorker(player.getLocation().add(1, 0, 3));
     raidZombies.spawnWorker(player.getLocation().add(-1, 0, 3));
