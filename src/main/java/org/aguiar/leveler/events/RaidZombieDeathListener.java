@@ -2,19 +2,13 @@ package org.aguiar.leveler.events;
 
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.utils.LevelerPlayerData;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RaidZombieDeathListener implements Listener {
 
@@ -26,25 +20,34 @@ public class RaidZombieDeathListener implements Listener {
 
   @EventHandler
   public void onDeath(EntityDeathEvent event) {
-    if (!(event.getEntity() instanceof Zombie)) {
+    if (!(event.getEntity() instanceof Zombie entity)) {
       return; // Ignora se não for um Zombie
     }
-
-    Zombie entity = (Zombie) event.getEntity();
 
     if (!entity.hasMetadata("isRaid")) {
       return;
     }
 
-    String customName = ChatColor.stripColor(entity.getCustomName());
     Player player = entity.getKiller();
 
-    assert player != null;
+    if (player == null) {
+      return;
+    }
 
+    String playerId = player.getUniqueId().toString();
+    LevelerPlayerData playerData = plugin.playersData.get(playerId);
+
+    if (playerData == null) {
+      player.sendMessage(ChatColor.RED + "Erro: Dados do jogador não encontrados.");
+      System.out.println(plugin.playersData.toString());
+      return; // Ou crie uma entrada padrão, se necessário
+    }
+
+    float playerExp = playerData.getPlayerExperience();
     float baseExperience = entity.getMetadata("baseExperience").stream().findFirst().map(MetadataValue::asFloat).orElse(0.0f);
-    float level = entity.getMetadata("level").stream().findFirst().map(MetadataValue::asFloat).orElse(0.0f);
-    float newExp = Math.min(player.getExp() + (level * baseExperience), 1.0f);
-    player.setExp(newExp);
+
+    playerData.setPlayerExperience(playerExp + baseExperience);
+    plugin.savePlayerData();
 
     player.sendMessage(String.format("Você ganhou %.2f de experiência!", baseExperience));
   }
