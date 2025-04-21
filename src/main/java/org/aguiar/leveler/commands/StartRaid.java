@@ -10,11 +10,9 @@ import org.bukkit.entity.Player;
 
 public class StartRaid implements CommandExecutor {
   private final Leveler plugin;
-  private final LevelerPlayerData playerData;
 
   public StartRaid(Leveler plugin) {
     this.plugin = plugin;
-    this.playerData = plugin.playersData.get(player.getUniqueId().toString());
   }
 
   @Override
@@ -24,6 +22,7 @@ public class StartRaid implements CommandExecutor {
       return false;
     }
 
+    LevelerPlayerData playerData = plugin.playersData.get(player.getUniqueId().toString());
     RaidZombie raidZombies = new RaidZombie(plugin, playerData);
 
     raidZombies.spawnBoss(player.getLocation().add(0, 0, 3));
