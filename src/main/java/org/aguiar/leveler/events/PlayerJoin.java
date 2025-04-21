@@ -1,15 +1,11 @@
 package org.aguiar.leveler.events;
 
 import org.aguiar.leveler.Leveler;
-import org.aguiar.leveler.utils.LevelerPlayerData;
+import org.aguiar.leveler.entities.LevelerPlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 
 public class PlayerJoin implements Listener {
   private Leveler plugin;
@@ -21,11 +17,9 @@ public class PlayerJoin implements Listener {
   @EventHandler
   public void onJoin(PlayerJoinEvent event) {
     Player player = event.getPlayer();
-
-    boolean playerExists = plugin.playersData.get(player.getUniqueId().toString()) != null;
-
-    if (!playerExists) {
-      plugin.playersData.put(player.getUniqueId().toString(), new LevelerPlayerData(0.0f, 0.0f));
+    if (!plugin.playersData.containsKey(player.getUniqueId().toString())) {
+      LevelerPlayerData newPlayerData = new LevelerPlayerData(0.0f, 0.0f);
+      plugin.playersData.put(player.getUniqueId().toString(), newPlayerData);
       plugin.savePlayerData();
     }
   }

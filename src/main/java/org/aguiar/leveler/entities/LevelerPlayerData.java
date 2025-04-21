@@ -1,8 +1,4 @@
-package org.aguiar.leveler.utils;
-
-import org.bukkit.entity.Player;
-
-import java.util.UUID;
+package org.aguiar.leveler.entities;
 
 public class LevelerPlayerData {
   private double playerLevel;

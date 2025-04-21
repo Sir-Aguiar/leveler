@@ -1,7 +1,6 @@
 package org.aguiar.leveler.entities;
 
 import org.aguiar.leveler.Leveler;
-import org.aguiar.leveler.utils.LevelerPlayerData;
 import org.aguiar.leveler.utils.MobStats;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -46,8 +45,8 @@ public class RaidZombie {
     zombie.getEquipment().setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
 
     zombie.setMetadata("isRaid", new FixedMetadataValue(plugin, true));
-    zombie.setMetadata("baseExperience", new FixedMetadataValue(plugin, playerData.getPlayerExperience() / 6.0f));
-    zombie.setMetadata("level", new FixedMetadataValue(plugin, 1.0f));
+    zombie.setMetadata("experienceFactor", new FixedMetadataValue(plugin, 0.84f));
+    zombie.setMetadata("type", new FixedMetadataValue(plugin, "Boss"));
 
     return zombie;
   }
@@ -74,9 +73,8 @@ public class RaidZombie {
     zombie.getEquipment().setBoots(new ItemStack(Material.LEATHER_BOOTS));
 
     zombie.setMetadata("isRaid", new FixedMetadataValue(plugin, "true"));
-    zombie.setMetadata("baseExperience", new FixedMetadataValue(plugin, playerData.getPlayerExperience() / 6.0f));
-    zombie.setMetadata("level", new FixedMetadataValue(plugin, 1.0f));
-
+    zombie.setMetadata("experienceFactor", new FixedMetadataValue(plugin, 1.52f));
+    zombie.setMetadata("type", new FixedMetadataValue(plugin, "Soldier"));
     return zombie;
   }
 }

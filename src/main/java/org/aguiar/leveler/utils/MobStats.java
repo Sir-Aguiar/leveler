@@ -1,5 +1,7 @@
 package org.aguiar.leveler.utils;
 
+import org.aguiar.leveler.entities.LevelerPlayerData;
+
 public class MobStats {
   public static final double ZOMBIE_SOLDIER_HP = 8.0;
   private static final double ZOMBIE_BOSS_HP = 10.0;

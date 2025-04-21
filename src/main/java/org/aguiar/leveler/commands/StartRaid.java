@@ -2,7 +2,7 @@ package org.aguiar.leveler.commands;
 
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.entities.RaidZombie;
-import org.aguiar.leveler.utils.LevelerPlayerData;
+import org.aguiar.leveler.entities.LevelerPlayerData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

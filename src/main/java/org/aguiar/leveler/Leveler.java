@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import org.aguiar.leveler.commands.StartRaid;
 import org.aguiar.leveler.events.PlayerJoin;
 import org.aguiar.leveler.events.RaidZombieDeathListener;
-import org.aguiar.leveler.utils.LevelerPlayerData;
+import org.aguiar.leveler.entities.LevelerPlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,6 +28,7 @@ public final class Leveler extends JavaPlugin {
 
     getDataFolder().mkdirs();
     startConfigs();
+    loadPlayerData();
 
     this.getCommand("start-raid").setExecutor(new StartRaid(this));
 
@@ -48,10 +49,6 @@ public final class Leveler extends JavaPlugin {
       if (!playerDataFile.exists()) {
         playerDataFile.createNewFile();
       }
-
-      loadPlayerData();
-
-
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -65,6 +62,8 @@ public final class Leveler extends JavaPlugin {
       if (playersData == null) {
         playersData = new HashMap<>();
       }
+
+      System.out.println("Dados carregados: " + playersData.toString());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -72,7 +71,15 @@ public final class Leveler extends JavaPlugin {
 
   public synchronized void savePlayerData() {
     try (Writer playerDataWriter = new FileWriter(playerDataFile, false)) {
+      if (playersData == null) {
+        System.out.println("NULO");
+      } else {
+        System.out.println(playersData.toString());
+      }
+
       gson.toJson(playersData, playerDataWriter);
+      playerDataWriter.close();
+      loadPlayerData();
     } catch (IOException e) {
       e.printStackTrace();
     }
