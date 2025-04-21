@@ -1,7 +1,10 @@
 package org.aguiar.leveler.events;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.entities.LevelerPlayerData;
+import org.aguiar.leveler.utils.PlayerLevelProgression;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -50,9 +53,12 @@ public class RaidZombieDeathListener implements Listener {
 
     float baseExperience = (playerExp / 7.75f) + experienceFactor;
     playerData.setPlayerExperience(playerExp + baseExperience);
+    playerData.setPlayerLevel(PlayerLevelProgression.calculatePlayerLevel(playerExp));
 
     plugin.savePlayerData();
 
-    player.sendMessage(String.format("Você ganhou %.2f de experiência!", baseExperience));
+    String message = String.format("%s%sPlayer XP: %s%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerExp);
+
+    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
   }
 }

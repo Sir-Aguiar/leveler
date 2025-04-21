@@ -1,10 +1,10 @@
 package org.aguiar.leveler.entities;
 
 public class LevelerPlayerData {
-  private double playerLevel;
+  private float playerLevel;
   private float playerExperience;
 
-  public LevelerPlayerData(double playerLevel, float playerExperience) {
+  public LevelerPlayerData(float playerLevel, float playerExperience) {
     this.playerLevel = playerLevel;
     this.playerExperience = playerExperience;
   }
@@ -12,11 +12,11 @@ public class LevelerPlayerData {
   public LevelerPlayerData() {
   }
 
-  public double getPlayerLevel() {
+  public float getPlayerLevel() {
     return playerLevel;
   }
 
-  public void setPlayerLevel(double playerLevel) {
+  public void setPlayerLevel(float playerLevel) {
     this.playerLevel = playerLevel;
   }
 
