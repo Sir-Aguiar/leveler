@@ -48,10 +48,4 @@ public class RaidZombieDeathListener implements Listener {
 
     player.sendMessage(String.format("Você ganhou %.2f de experiência!", baseExperience));
   }
-
-
-  @EventHandler
-  public void onJoin(PlayerJoinEvent event) {
-
-  }
 }
