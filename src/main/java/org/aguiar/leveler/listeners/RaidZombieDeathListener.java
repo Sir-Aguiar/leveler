@@ -1,11 +1,13 @@
-package org.aguiar.leveler.events;
+package org.aguiar.leveler.listeners;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.database.entities.PlayerProgression;
 import org.aguiar.leveler.database.repositories.PlayerProgressionRepository;
+import org.aguiar.leveler.events.LevelUpEvent;
 import org.aguiar.leveler.utils.PlayerLevelProgression;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -26,7 +28,6 @@ public class RaidZombieDeathListener implements Listener {
 
   @EventHandler
   public void onDeath(EntityDeathEvent event) {
-
     if (!(event.getEntity() instanceof Zombie entity)) {
       return; // Ignora se não for um Zombie
     }
@@ -61,17 +62,22 @@ public class RaidZombieDeathListener implements Listener {
 
     String zombieType = entity.getMetadata("type").stream().findFirst().map(MetadataValue::asString).orElse("Soldier");
     float experienceFactor = entity.getMetadata("experienceFactor").stream().findFirst().map(MetadataValue::asFloat).orElse(0.84f);
+
     float playerExp = playerData.getPlayerExperience();
+    float playerLevel = playerData.getPlayerLevel();
 
     float baseExperience = (playerExp / 7.75f) + experienceFactor;
-
-    playerData.setPlayerExperience(playerExp + baseExperience);
-    playerData.setPlayerLevel(PlayerLevelProgression.calculatePlayerLevel(playerExp));
+    float newExp = playerExp + baseExperience;
 
     float experienceForNextLevel = PlayerLevelProgression.experienceForNextLevel((int) playerData.getPlayerLevel());
+    float newLevel = PlayerLevelProgression.calculatePlayerLevel(newExp);
+
+
+    playerData.setPlayerExperience(newExp);
+    playerData.setPlayerLevel(newLevel);
+
 
     // Just in case the sqlite is blocked by other thread
-
     boolean updated = false;
     int tries = 0;
     SQLException lastException = null;
@@ -99,7 +105,11 @@ public class RaidZombieDeathListener implements Listener {
       plugin.getLogger().warning(lastException.getMessage());
     }
 
-    String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerExp, experienceForNextLevel);
+    if ((int) newLevel > (int) playerLevel) {
+      Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, playerLevel, newLevel));
+    }
+
+    String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerData.getPlayerLevel(), experienceForNextLevel);
 
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
   }

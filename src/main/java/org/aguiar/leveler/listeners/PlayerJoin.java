@@ -1,4 +1,4 @@
-package org.aguiar.leveler.events;
+package org.aguiar.leveler.listeners;
 
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.database.entities.PlayerAttributes;

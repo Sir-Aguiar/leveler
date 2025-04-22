@@ -3,9 +3,9 @@ package org.aguiar.leveler;
 
 import org.aguiar.leveler.commands.StartRaid;
 import org.aguiar.leveler.database.Database;
-import org.aguiar.leveler.entities.RaidZombie;
-import org.aguiar.leveler.events.PlayerJoin;
-import org.aguiar.leveler.events.RaidZombieDeathListener;
+import org.aguiar.leveler.listeners.LevelUpListener;
+import org.aguiar.leveler.listeners.PlayerJoin;
+import org.aguiar.leveler.listeners.RaidZombieDeathListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,6 +45,8 @@ public final class Leveler extends JavaPlugin {
     this.getCommand("start-raid").setExecutor(new StartRaid(this));
 
     getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
+    getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
+
     getServer().getPluginManager().registerEvents(new RaidZombieDeathListener(this), this);
 
 
