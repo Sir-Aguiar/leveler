@@ -1,6 +1,7 @@
 package org.aguiar.leveler.entities;
 
 import org.aguiar.leveler.Leveler;
+import org.aguiar.leveler.database.entities.PlayerProgression;
 import org.aguiar.leveler.utils.MobStats;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,9 +16,9 @@ import org.bukkit.metadata.FixedMetadataValue;
 public class RaidZombie {
   private Zombie zombie;
   private final Leveler plugin;
-  private final LevelerPlayerData playerData;
+  private final PlayerProgression playerData;
 
-  public RaidZombie(Leveler plugin, LevelerPlayerData playerData) {
+  public RaidZombie(Leveler plugin, PlayerProgression playerData) {
     this.plugin = plugin;
     this.playerData = playerData;
   }

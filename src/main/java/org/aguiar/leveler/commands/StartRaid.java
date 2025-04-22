@@ -1,12 +1,14 @@
 package org.aguiar.leveler.commands;
 
 import org.aguiar.leveler.Leveler;
+import org.aguiar.leveler.database.entities.PlayerProgression;
 import org.aguiar.leveler.entities.RaidZombie;
-import org.aguiar.leveler.entities.LevelerPlayerData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.sql.SQLException;
 
 public class StartRaid implements CommandExecutor {
   private final Leveler plugin;
@@ -22,7 +24,14 @@ public class StartRaid implements CommandExecutor {
       return false;
     }
 
-    LevelerPlayerData playerData = plugin.playersData.get(player.getUniqueId().toString());
+    PlayerProgression playerData = null;
+
+    try {
+      playerData = plugin.database.playerProgressionsDAO.queryForId(player.getUniqueId().toString());
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
     RaidZombie raidZombies = new RaidZombie(plugin, playerData);
 
     raidZombies.spawnBoss(player.getLocation().add(0, 0, 3));

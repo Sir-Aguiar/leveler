@@ -1,12 +1,16 @@
 package org.aguiar.leveler.events;
 
 import org.aguiar.leveler.Leveler;
-import org.aguiar.leveler.entities.LevelerPlayerData;
-import org.aguiar.leveler.utils.PlayerLevelProgression;
+import org.aguiar.leveler.database.entities.PlayerAttributes;
+import org.aguiar.leveler.database.entities.PlayerProgression;
+import org.aguiar.leveler.database.repositories.PlayerAttributesRepository;
+import org.aguiar.leveler.database.repositories.PlayerProgressionRepository;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.sql.SQLException;
 
 public class PlayerJoin implements Listener {
   private Leveler plugin;
@@ -18,10 +22,33 @@ public class PlayerJoin implements Listener {
   @EventHandler
   public void onJoin(PlayerJoinEvent event) {
     Player player = event.getPlayer();
-    LevelerPlayerData playerData = plugin.playersData.computeIfAbsent(player.getUniqueId().toString(), k -> new LevelerPlayerData(0.0f, 0.0f));
+    PlayerProgression playerProgression = null;
+    PlayerAttributes playerAttributes = null;
 
-    playerData.setPlayerLevel(PlayerLevelProgression.calculatePlayerLevel(playerData.getPlayerExperience()));
+    PlayerProgressionRepository playerProgressionRepository = new PlayerProgressionRepository(plugin.database.playerProgressionsDAO);
+    PlayerAttributesRepository playerAttributesRepository = new PlayerAttributesRepository(plugin.database.playerAttributesDAO);
 
-    plugin.savePlayerData();
+    try {
+      playerProgression = playerProgressionRepository.getById(player.getUniqueId());
+      playerAttributes = playerAttributesRepository.getById(player.getUniqueId());
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    if (playerAttributes == null) {
+      try {
+        playerAttributesRepository.setDefaultAttributes(player.getUniqueId().toString(), player.getName());
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+
+    if (playerProgression == null) {
+      try {
+        playerProgressionRepository.setDefaultProgression(player.getUniqueId());
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
   }
 }
