@@ -54,10 +54,11 @@ public class RaidZombieDeathListener implements Listener {
     float baseExperience = (playerExp / 7.75f) + experienceFactor;
     playerData.setPlayerExperience(playerExp + baseExperience);
     playerData.setPlayerLevel(PlayerLevelProgression.calculatePlayerLevel(playerExp));
+    float experienceForNextLevel = PlayerLevelProgression.experienceForNextLevel((int) playerData.getPlayerLevel());
 
     plugin.savePlayerData();
 
-    String message = String.format("%s%sPlayer XP: %s%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerExp);
+    String message = String.format("%s%sPlayer XP: %s%.2f/%2.f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerExp, experienceForNextLevel);
 
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
   }
