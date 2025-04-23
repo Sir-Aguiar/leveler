@@ -10,7 +10,7 @@ public class PlayerLevelProgression {
    * @return Nível do jogador.
    */
   public static float calculatePlayerLevel(float playerExperience) {
-    return (float) Math.sqrt(playerExperience / PROGRESSION_FACTOR);
+    return (float) Math.pow(playerExperience / PROGRESSION_FACTOR, 1 / 1.388);
   }
 
   /**

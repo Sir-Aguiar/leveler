@@ -4,3 +4,5 @@ main: org.aguiar.leveler.Leveler
 api-version: '1.20'
 commands:
   start-raid:
+  leveler-stats:
+  killer-bone:

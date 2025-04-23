@@ -75,7 +75,7 @@ public class RaidZombieDeathListener implements Listener {
 
     playerData.setPlayerExperience(newExp);
     playerData.setPlayerLevel(newLevel);
-
+    playerData.setSkillPoints(playerData.getSkillPoints() + 1);
 
     // Just in case the sqlite is blocked by other thread
     boolean updated = false;
@@ -109,8 +109,7 @@ public class RaidZombieDeathListener implements Listener {
       Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, playerLevel, newLevel));
     }
 
-    String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerData.getPlayerLevel(), experienceForNextLevel);
-
+    String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerData.getPlayerExperience(), experienceForNextLevel);
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
   }
 }
