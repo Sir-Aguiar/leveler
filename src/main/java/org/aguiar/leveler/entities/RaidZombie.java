@@ -14,9 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public class RaidZombie {
-  private Zombie zombie;
   private final Leveler plugin;
   private final PlayerProgression playerData;
+  private Zombie zombie;
 
   public RaidZombie(Leveler plugin, PlayerProgression playerData) {
     this.plugin = plugin;
@@ -30,6 +30,7 @@ public class RaidZombie {
     double zombieDamage = MobStats.getScaledZombieBossDamage(playerData);
 
     zombie = (Zombie) world.spawnEntity(location, EntityType.ZOMBIE);
+
 
     zombie.setCustomName(String.format("%s%SChefe", ChatColor.BOLD, ChatColor.GOLD));
     zombie.setCustomNameVisible(true);
@@ -48,6 +49,8 @@ public class RaidZombie {
     zombie.setMetadata("isRaid", new FixedMetadataValue(plugin, true));
     zombie.setMetadata("experienceFactor", new FixedMetadataValue(plugin, 0.84f));
     zombie.setMetadata("type", new FixedMetadataValue(plugin, "Boss"));
+
+    zombie.setAdult();
 
     return zombie;
   }
@@ -76,6 +79,9 @@ public class RaidZombie {
     zombie.setMetadata("isRaid", new FixedMetadataValue(plugin, "true"));
     zombie.setMetadata("experienceFactor", new FixedMetadataValue(plugin, 1.52f));
     zombie.setMetadata("type", new FixedMetadataValue(plugin, "Soldier"));
+
+    zombie.setAdult();
+
     return zombie;
   }
 }
