@@ -45,6 +45,7 @@ public class PlayerJoin implements Listener {
 
     if (playerProgression == null) {
       try {
+
         playerProgressionRepository.setDefaultProgression(player.getUniqueId());
       } catch (SQLException e) {
         e.printStackTrace();

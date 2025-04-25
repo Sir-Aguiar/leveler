@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.database.entities.PlayerProgression;
 import org.aguiar.leveler.database.repositories.PlayerProgressionRepository;
+import org.aguiar.leveler.entities.ZombieClasses;
 import org.aguiar.leveler.events.LevelUpEvent;
 import org.aguiar.leveler.utils.PlayerLevelProgression;
 import org.bukkit.Bukkit;
@@ -59,23 +60,25 @@ public class RaidZombieDeathListener implements Listener {
       return;
     }
 
-    String zombieType = entity.getMetadata("type").stream().findFirst().map(MetadataValue::asString).orElse("Soldier");
-    float experienceFactor = entity.getMetadata("experienceFactor").stream().findFirst().map(MetadataValue::asFloat).orElse(0.84f);
+    String zombieType = entity.getMetadata("type").stream().findFirst().map(MetadataValue::asString).orElse(ZombieClasses.SOLDIER.toString());
+    float xpDrop = entity.getMetadata("xpDrop").stream().findFirst().map(MetadataValue::asFloat).orElse(0.0f);
 
     float playerExp = playerData.getPlayerExperience();
     float playerLevel = playerData.getPlayerLevel();
 
-    float baseExperience = (playerExp / 7.75f) + experienceFactor;
-    float newExp = playerExp + baseExperience;
-
+    float newExp = playerExp + xpDrop;
     float experienceForNextLevel = PlayerLevelProgression.experienceForNextLevel((int) playerData.getPlayerLevel());
+    boolean leveledUp = newExp > experienceForNextLevel;
     float newLevel = PlayerLevelProgression.calculatePlayerLevel(newExp);
 
     playerData.setPlayerExperience(newExp);
-    playerData.setPlayerLevel(newLevel);
-    playerData.setSkillPoints(playerData.getSkillPoints() + 1);
 
-    // Just in case the sqlite is blocked by other thread
+    if (leveledUp) {
+      playerData.setPlayerLevel(newLevel);
+      playerData.setPlayerExperience(newExp - experienceForNextLevel);
+      playerData.setSkillPoints(playerData.getSkillPoints() + 1);
+    }
+
     boolean updated = false;
     int tries = 0;
     SQLException lastException = null;
@@ -103,7 +106,7 @@ public class RaidZombieDeathListener implements Listener {
       plugin.getLogger().warning(lastException.getMessage());
     }
 
-    if ((int) newLevel > (int) playerLevel) {
+    if (leveledUp) {
       Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, playerLevel, newLevel));
     }
 

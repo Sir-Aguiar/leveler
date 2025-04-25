@@ -49,7 +49,7 @@ public class PlayerReport implements CommandExecutor {
       AtomicInteger lineLength = new AtomicInteger();
 
       String level = ChatColor.YELLOW + "Level: " + ChatColor.GREEN + (int) playerLevel + "\n";
-      String experience = ChatColor.YELLOW + "Experience: " + ChatColor.GREEN + playerExp + " / " + (experienceForNextLevel + playerExp) + "\n";
+      String experience = ChatColor.YELLOW + "Experience: " + ChatColor.GREEN + playerExp + " / " + (experienceForNextLevel) + "\n";
       String skill = ChatColor.YELLOW + "Skill Points: " + ChatColor.GREEN + skillPoints + "\n";
 
       String message = level + experience + skill;

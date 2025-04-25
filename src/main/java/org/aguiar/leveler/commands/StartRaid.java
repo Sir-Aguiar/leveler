@@ -37,10 +37,10 @@ public class StartRaid implements CommandExecutor {
     RaidZombie raidZombies = new RaidZombie(plugin, playerData);
 
     raidZombies.spawnBoss(player.getLocation().add(0, 0, 3));
-    raidZombies.spawnWorker(player.getLocation().add(1, 0, 3));
-    raidZombies.spawnWorker(player.getLocation().add(-1, 0, 3));
-    raidZombies.spawnWorker(player.getLocation().add(2, 0, 2));
-    raidZombies.spawnWorker(player.getLocation().add(-2, 0, 2));
+    raidZombies.spawnSoldier(player.getLocation().add(1, 0, 3));
+    raidZombies.spawnSoldier(player.getLocation().add(-1, 0, 3));
+    raidZombies.spawnSoldier(player.getLocation().add(2, 0, 2));
+    raidZombies.spawnSoldier(player.getLocation().add(-2, 0, 2));
 
     player.sendMessage("§aRaid iniciada! Cuidado com os zombies!");
 
