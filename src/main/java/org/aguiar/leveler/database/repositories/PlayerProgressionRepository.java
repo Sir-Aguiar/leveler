@@ -17,8 +17,14 @@ public class PlayerProgressionRepository {
     return DAO.queryForId(playerId.toString());
   }
 
+  public void update(PlayerProgression playerProgression) throws SQLException {
+    DAO.update(playerProgression);
+  }
+
   public void setDefaultProgression(UUID playerId) throws SQLException {
     PlayerProgression playerProgression = new PlayerProgression(playerId.toString());
     DAO.create(playerProgression);
   }
+
+
 }

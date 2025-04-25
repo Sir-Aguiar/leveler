@@ -2,6 +2,7 @@ package org.aguiar.leveler.commands;
 
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.database.entities.PlayerProgression;
+import org.aguiar.leveler.database.repositories.PlayerProgressionRepository;
 import org.aguiar.leveler.entities.RaidZombie;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,9 +26,10 @@ public class StartRaid implements CommandExecutor {
     }
 
     PlayerProgression playerData = null;
+    PlayerProgressionRepository playerProgressionRepository = new PlayerProgressionRepository(plugin.database.playerProgressionsDAO);
 
     try {
-      playerData = plugin.database.playerProgressionsDAO.queryForId(player.getUniqueId().toString());
+      playerData = playerProgressionRepository.getById(player.getUniqueId());
     } catch (SQLException e) {
       e.printStackTrace();
     }

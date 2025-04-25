@@ -45,7 +45,6 @@ public class RaidZombieDeathListener implements Listener {
     UUID playerId = player.getUniqueId();
 
     PlayerProgressionRepository playerProgressionRepository = new PlayerProgressionRepository(plugin.database.playerProgressionsDAO);
-
     PlayerProgression playerData = null;
 
     try {
@@ -72,7 +71,6 @@ public class RaidZombieDeathListener implements Listener {
     float experienceForNextLevel = PlayerLevelProgression.experienceForNextLevel((int) playerData.getPlayerLevel());
     float newLevel = PlayerLevelProgression.calculatePlayerLevel(newExp);
 
-
     playerData.setPlayerExperience(newExp);
     playerData.setPlayerLevel(newLevel);
     playerData.setSkillPoints(playerData.getSkillPoints() + 1);
@@ -84,7 +82,7 @@ public class RaidZombieDeathListener implements Listener {
 
     while (!updated && tries < 3) {
       try {
-        plugin.database.playerProgressionsDAO.update(playerData);
+        playerProgressionRepository.update(playerData);
         updated = true;
       } catch (SQLException e) {
         lastException = e;
