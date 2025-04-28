@@ -9,7 +9,7 @@ public class PlayerProgression {
   private String playerId;
 
   @DatabaseField(defaultValue = "1")
-  private float playerLevel;
+  private int playerLevel;
 
   @DatabaseField(defaultValue = "0")
   private float playerExperience;
@@ -35,11 +35,11 @@ public class PlayerProgression {
     this.playerId = playerId;
   }
 
-  public float getPlayerLevel() {
+  public int getPlayerLevel() {
     return playerLevel;
   }
 
-  public void setPlayerLevel(float playerLevel) {
+  public void setPlayerLevel(int playerLevel) {
     this.playerLevel = playerLevel;
   }
 

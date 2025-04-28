@@ -54,7 +54,6 @@ public class RaidZombieDeathListener implements Listener {
       e.printStackTrace();
     }
 
-
     if (playerData == null) {
       player.sendMessage(ChatColor.RED + "Erro: Dados do jogador não encontrados.");
       return;
@@ -63,20 +62,26 @@ public class RaidZombieDeathListener implements Listener {
     String zombieType = entity.getMetadata("type").stream().findFirst().map(MetadataValue::asString).orElse(ZombieClasses.SOLDIER.toString());
     float xpDrop = entity.getMetadata("xpDrop").stream().findFirst().map(MetadataValue::asFloat).orElse(0.0f);
 
-    float playerExp = playerData.getPlayerExperience();
-    float playerLevel = playerData.getPlayerLevel();
+    float playerExp = playerData.getPlayerExperience(); // This is XP *within* the current level
+    int playerLevel = playerData.getPlayerLevel();
+    float totalCurrentExp = PlayerLevelProgression.experienceForLevel(playerLevel) + playerExp; // Calculate total accumulated XP
 
-    float newExp = playerExp + xpDrop;
-    float experienceForNextLevel = PlayerLevelProgression.experienceForNextLevel((int) playerData.getPlayerLevel());
-    boolean leveledUp = newExp > experienceForNextLevel;
-    float newLevel = PlayerLevelProgression.calculatePlayerLevel(newExp);
+    float totalNewExp = totalCurrentExp + xpDrop; // Total accumulated XP after kill
 
-    playerData.setPlayerExperience(newExp);
+    int originalLevel = playerLevel; // Store original level for comparison
+    int newLevel = PlayerLevelProgression.calculatePlayerLevel(totalNewExp); // Calculate potential new level
 
-    if (leveledUp) {
+    if (newLevel > originalLevel) {
+      float xpRequiredForNewLevel = PlayerLevelProgression.experienceForLevel(newLevel); // Get total XP needed to reach this new level
+      float remainingExp = totalNewExp - xpRequiredForNewLevel; // Calculate XP progress *into* the new level
+
       playerData.setPlayerLevel(newLevel);
-      playerData.setPlayerExperience(newExp - experienceForNextLevel);
-      playerData.setSkillPoints(playerData.getSkillPoints() + 1);
+      playerData.setPlayerExperience(remainingExp); // Store the XP progress for the new level
+      playerData.setSkillPoints(playerData.getSkillPoints() + (newLevel - originalLevel)); // Grant skill points for levels gained
+      Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, originalLevel, newLevel)); // Fire the level up event
+    } else {
+      // Did not level up, just add the XP drop to the current level's progress
+      playerData.setPlayerExperience(playerExp + xpDrop);
     }
 
     boolean updated = false;
@@ -106,11 +111,15 @@ public class RaidZombieDeathListener implements Listener {
       plugin.getLogger().warning(lastException.getMessage());
     }
 
-    if (leveledUp) {
-      Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, playerLevel, newLevel));
+    // Recalculate experienceForNextLevel based on the potentially updated player level for the action bar message
+    // Note: experienceForNextLevel now correctly represents the *total* XP needed for the next level.
+    // We need the XP required *within* the current level for the display.
+    float xpNeededForCurrentLevel = PlayerLevelProgression.experienceForLevel(playerData.getPlayerLevel() + 1) - PlayerLevelProgression.experienceForLevel(playerData.getPlayerLevel());
+    if (playerData.getPlayerLevel() == 0) {
+        xpNeededForCurrentLevel = PlayerLevelProgression.experienceForLevel(1); // Special case for level 0
     }
 
-    String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerData.getPlayerExperience(), experienceForNextLevel);
+    String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerData.getPlayerExperience(), xpNeededForCurrentLevel);
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
   }
 }
