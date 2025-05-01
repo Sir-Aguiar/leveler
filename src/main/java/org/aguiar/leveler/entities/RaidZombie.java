@@ -52,7 +52,7 @@ public class RaidZombie {
     zombie.setMetadata("type", new FixedMetadataValue(plugin, ZombieClasses.BOSS));
     zombie.setAdult();
 
-    plugin.getLogger().info(String.format("[ZombieSpawn] Type: SOLDIER, HP: %.2f, Damage: %.2f, XP Drop: %.1f", zombieHp, zombieDamage,
+    plugin.getLogger().info(String.format("[ZombieSpawn] Type: BOSS, HP: %.2f, Damage: %.2f, XP Drop: %.1f", zombieHp, zombieDamage,
             MobStats.getZombieScaledXp(playerData.getPlayerLevel(), ZombieClasses.BOSS)));
 
     return zombie;
