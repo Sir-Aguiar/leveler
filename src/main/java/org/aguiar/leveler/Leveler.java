@@ -2,6 +2,7 @@ package org.aguiar.leveler;
 
 
 import org.aguiar.leveler.commands.GetEntityKiller;
+import org.aguiar.leveler.commands.NewWorld;
 import org.aguiar.leveler.commands.PlayerReport;
 import org.aguiar.leveler.commands.StartRaid;
 import org.aguiar.leveler.database.Database;
@@ -45,9 +46,20 @@ public final class Leveler extends JavaPlugin {
       return;
     }
 
+    String schematicResourcePath = "schematics/lvl_1_dungeon.schem";
+    File schematicFile = new File(getDataFolder(), schematicResourcePath);
+
+    if (!schematicFile.exists()) {
+      getLogger().info("Extraindo schematic padrão: " + schematicResourcePath);
+      saveResource(schematicResourcePath, false);
+    } else {
+      getLogger().info("Schematic já existe na pasta de dados: " + schematicResourcePath);
+    }
+
     this.getCommand("start-raid").setExecutor(new StartRaid(this));
     this.getCommand("leveler-stats").setExecutor(new PlayerReport(this));
     this.getCommand("killer-bone").setExecutor(new GetEntityKiller());
+    this.getCommand("new-world").setExecutor(new NewWorld(this));
 
     getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
     getServer().getPluginManager().registerEvents(new LevelUpListener(this), this);

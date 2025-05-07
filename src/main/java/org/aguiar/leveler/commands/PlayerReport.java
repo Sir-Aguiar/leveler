@@ -62,9 +62,7 @@ public class PlayerReport implements CommandExecutor {
 
       StringBuilder lines = new StringBuilder();
 
-      for (int index = 0; index < lineLength.get(); index++) {
-        lines.append("=");
-      }
+      lines.append("=".repeat(Math.max(0, lineLength.get())));
 
       player.sendMessage(ChatColor.YELLOW + lines.toString());
       player.sendMessage(message);
