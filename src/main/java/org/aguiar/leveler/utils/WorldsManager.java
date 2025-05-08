@@ -3,6 +3,7 @@ package org.aguiar.leveler.utils;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,13 @@ public class WorldsManager {
 
   public static World getWorld(String worldName) {
     return existentWorlds.stream().filter(world -> world.getName().equals(worldName)).findFirst().get();
+  }
+
+  public static List<World> getPlayerWorlds(Player player) {
+    return existentWorlds.stream().filter(world -> {
+      String[] worldComponents = world.getName().split("_");
+      return worldComponents[0].equals(player.getUniqueId().toString());
+    }).toList();
   }
 
   public static void deleteWorld(String worldName) {
