@@ -49,7 +49,7 @@ public class PlayerReport implements CommandExecutor {
       AtomicInteger lineLength = new AtomicInteger();
 
       String level = ChatColor.YELLOW + "Level: " + ChatColor.GREEN + (int) playerLevel + "\n";
-      String experience = ChatColor.YELLOW + "Experience: " + ChatColor.GREEN + playerExp + " / " + (experienceForNextLevel + playerExp) + "\n";
+      String experience = ChatColor.YELLOW + "Experience: " + ChatColor.GREEN + playerExp + " / " + (experienceForNextLevel) + "\n";
       String skill = ChatColor.YELLOW + "Skill Points: " + ChatColor.GREEN + skillPoints + "\n";
 
       String message = level + experience + skill;
@@ -62,9 +62,7 @@ public class PlayerReport implements CommandExecutor {
 
       StringBuilder lines = new StringBuilder();
 
-      for (int index = 0; index < lineLength.get(); index++) {
-        lines.append("=");
-      }
+      lines.append("=".repeat(Math.max(0, lineLength.get())));
 
       player.sendMessage(ChatColor.YELLOW + lines.toString());
       player.sendMessage(message);

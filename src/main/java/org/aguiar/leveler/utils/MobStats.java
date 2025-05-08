@@ -8,14 +8,14 @@ public class MobStats {
   public static final double XP_POWER = 1.388;
   public static final double XP_CONSTANT = 0.1;
 
-  public static final double ZOMBIE_BASE_XP_MULTIPLIER = 1;
-  public static final double ZOMBIE_BOSS_BASE_XP_MULTIPLIER = 1.15;
+  public static final double ZOMBIE_XP_MULTIPLIER = 1;
+  public static final double ZOMBIE_BOSS_XP_MULTIPLIER = 1.15;
 
   public static final double ZOMBIE_SOLDIER_HP = 8.0;
-  public static final double ZOMBIE_SOLDIER_DAMAGE = 1.50;
+  public static final double ZOMBIE_SOLDIER_DAMAGE = 0.75;
 
   private static final double ZOMBIE_BOSS_HP = 10.0;
-  private static final double ZOMBIE_BOSS_DAMAGE = 0.75;
+  private static final double ZOMBIE_BOSS_DAMAGE = 1.0;
 
   public static double getScaledXP(PlayerProgression playerData, ZombieClasses zombieClass) {
     double playerLevel = playerData.getPlayerLevel();
@@ -45,7 +45,7 @@ public class MobStats {
   }
 
   public static double getScaledZombieSoldierDamage(PlayerProgression playerData) {
-    return Math.min((playerData.getPlayerExperience() / 10) + ZOMBIE_SOLDIER_DAMAGE, 50.0f);
+    return Math.min((playerData.getPlayerLevel() * 0.95) + ZOMBIE_SOLDIER_DAMAGE, 50.0f);
   }
 
   public static double getScaledZombieBossHp(PlayerProgression playerData) {
@@ -53,7 +53,7 @@ public class MobStats {
   }
 
   public static double getScaledZombieBossDamage(PlayerProgression playerData) {
-    return Math.min((playerData.getPlayerExperience() / 10) + ZOMBIE_BOSS_DAMAGE, 50.0f);
+    return Math.min((playerData.getPlayerLevel() * 0.85) + ZOMBIE_BOSS_DAMAGE, 50.0f);
   }
 
   public static double getScaledZombieSoldierHp(PlayerProgression playerData) {

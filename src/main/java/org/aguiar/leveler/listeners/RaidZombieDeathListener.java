@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.database.entities.PlayerProgression;
 import org.aguiar.leveler.database.repositories.PlayerProgressionRepository;
+import org.aguiar.leveler.entities.ZombieClasses;
 import org.aguiar.leveler.events.LevelUpEvent;
 import org.aguiar.leveler.utils.PlayerLevelProgression;
 import org.bukkit.Bukkit;
@@ -29,18 +30,17 @@ public class RaidZombieDeathListener implements Listener {
   @EventHandler
   public void onDeath(EntityDeathEvent event) {
     if (!(event.getEntity() instanceof Zombie entity)) {
-      return; // Ignora se não for um Zombie
+      return;
     }
 
-    if (!entity.hasMetadata("isRaid")) {
+    boolean hasRequiredMeta = entity.hasMetadata("isRaid") && entity.hasMetadata("type") && entity.hasMetadata("xpDrop");
+
+    if (!hasRequiredMeta) {
       return;
     }
 
     Player player = entity.getKiller();
-
-    if (player == null) {
-      return;
-    }
+    assert player != null;
 
     UUID playerId = player.getUniqueId();
 
@@ -53,61 +53,43 @@ public class RaidZombieDeathListener implements Listener {
       e.printStackTrace();
     }
 
-
     if (playerData == null) {
       player.sendMessage(ChatColor.RED + "Erro: Dados do jogador não encontrados.");
       return;
     }
 
-    String zombieType = entity.getMetadata("type").stream().findFirst().map(MetadataValue::asString).orElse("Soldier");
-    float experienceFactor = entity.getMetadata("experienceFactor").stream().findFirst().map(MetadataValue::asFloat).orElse(0.84f);
+    String zombieType = entity.getMetadata("type").stream().findFirst().map(MetadataValue::asString).orElse(ZombieClasses.SOLDIER.toString());
+    float xpDrop = entity.getMetadata("xpDrop").stream().findFirst().map(MetadataValue::asFloat).orElse(0.0f);
 
     float playerExp = playerData.getPlayerExperience();
-    float playerLevel = playerData.getPlayerLevel();
+    int playerLevel = playerData.getPlayerLevel();
+    float totalCurrentExp = PlayerLevelProgression.experienceForLevel(playerLevel) + playerExp;
 
-    float baseExperience = (playerExp / 7.75f) + experienceFactor;
-    float newExp = playerExp + baseExperience;
+    float totalNewExp = totalCurrentExp + xpDrop;
 
-    float experienceForNextLevel = PlayerLevelProgression.experienceForNextLevel((int) playerData.getPlayerLevel());
-    float newLevel = PlayerLevelProgression.calculatePlayerLevel(newExp);
+    int newLevel = PlayerLevelProgression.calculatePlayerLevel(totalNewExp);
 
-    playerData.setPlayerExperience(newExp);
-    playerData.setPlayerLevel(newLevel);
-    playerData.setSkillPoints(playerData.getSkillPoints() + 1);
+    if (newLevel > playerLevel) {
+      float xpRequiredForNewLevel = PlayerLevelProgression.experienceForLevel(newLevel);
+      float remainingExp = totalNewExp - xpRequiredForNewLevel;
 
-    // Just in case the sqlite is blocked by other thread
-    boolean updated = false;
-    int tries = 0;
-    SQLException lastException = null;
+      playerData.setPlayerLevel(newLevel);
+      playerData.setPlayerExperience(remainingExp);
+      playerData.setSkillPoints(playerData.getSkillPoints() + (newLevel - playerLevel));
 
-    while (!updated && tries < 3) {
-      try {
-        playerProgressionRepository.update(playerData);
-        updated = true;
-      } catch (SQLException e) {
-        lastException = e;
-        if (e.getCause() instanceof org.sqlite.SQLiteException) {
-          tries++;
-
-          try {
-            Thread.sleep(100L * tries);
-          } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-          }
-        }
-      }
-    }
-
-    if (!updated) {
-      plugin.getLogger().warning("Falha ao atualizar progresso após " + tries + " tries");
-      plugin.getLogger().warning(lastException.getMessage());
-    }
-
-    if ((int) newLevel > (int) playerLevel) {
       Bukkit.getPluginManager().callEvent(new LevelUpEvent(player, playerLevel, newLevel));
+    } else {
+      playerData.setPlayerExperience(playerExp + xpDrop);
     }
 
-    String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerData.getPlayerExperience(), experienceForNextLevel);
+    try {
+      playerProgressionRepository.update(playerData);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    float xpNeededForCurrentLevel = PlayerLevelProgression.experienceForCurrentLevel(playerData.getPlayerLevel());
+    String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerData.getPlayerExperience(), xpNeededForCurrentLevel);
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
   }
 }

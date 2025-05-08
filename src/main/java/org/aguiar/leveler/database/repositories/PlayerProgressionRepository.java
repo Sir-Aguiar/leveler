@@ -25,6 +25,4 @@ public class PlayerProgressionRepository {
     PlayerProgression playerProgression = new PlayerProgression(playerId.toString());
     DAO.create(playerProgression);
   }
-
-
 }

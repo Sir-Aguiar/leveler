@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.sql.SQLException;
 
 public class PlayerJoin implements Listener {
-  private Leveler plugin;
+  private final Leveler plugin;
 
   public PlayerJoin(Leveler leveler) {
     plugin = leveler;
@@ -45,6 +45,7 @@ public class PlayerJoin implements Listener {
 
     if (playerProgression == null) {
       try {
+
         playerProgressionRepository.setDefaultProgression(player.getUniqueId());
       } catch (SQLException e) {
         e.printStackTrace();
