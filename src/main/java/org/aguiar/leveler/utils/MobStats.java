@@ -5,6 +5,8 @@ import org.aguiar.leveler.entities.ZombieClasses;
 
 public class MobStats {
   public static final double MOB_BASE_XP = 10.0;
+  public static final double XP_POWER = 1.388;
+  public static final double XP_CONSTANT = 0.1;
 
   public static final double ZOMBIE_BASE_XP_MULTIPLIER = 1;
   public static final double ZOMBIE_BOSS_BASE_XP_MULTIPLIER = 1.15;
@@ -19,11 +21,27 @@ public class MobStats {
     double playerLevel = playerData.getPlayerLevel();
     double playerExperience = playerData.getPlayerExperience();
 
-    if (zombieClass == ZombieClasses.BOSS) {
-      return (playerLevel * ZOMBIE_BOSS_BASE_XP_MULTIPLIER) + (playerExperience / 10) + MOB_BASE_XP;
-    }
+    if (playerLevel < 1) playerLevel = 1;
+    // Formula: XP_base * Fator_XP(Nivel) * Multiplicador_por_Classe
+    // Vamos usar uma formula similar: Constante_XP * (Nivel - 1)^P, ou Constante_XP * Nivel^P
+    // Uma forma comum é: XP_base * (1 + Constante_XP * (playerLevel - 1)^P)
+    // Onde P pode ser 1.0, 1.1, ou até perto de 1.388 para manter o ritmo.
+    // Vamos tentar P=1.0 para simplicidade inicial (escalonamento linear do Fator_XP)
+    // Ou P=1.1 ou 1.2 para um crescimento um pouco mais acentuado
+    // Ou P=1.388 para tentar alinhar o ritmo de ganho com o custo de nível
 
-    return MOB_BASE_XP;
+    double scalingFactor = 1.0 + XP_CONSTANT * Math.pow(playerLevel - 1, XP_POWER);
+
+    if (playerLevel == 1) scalingFactor = 1.0;
+
+    double xpMultiplier = 1.0;
+
+    if (zombieClass.equals(ZombieClasses.BOSS)) xpMultiplier = 1.15
+
+    double scaledXP = MOB_BASE_XP * scalingFactor * xpMultiplier;
+
+    return scaledXP;
+
   }
 
   public static double getScaledZombieSoldierDamage(PlayerProgression playerData) {
