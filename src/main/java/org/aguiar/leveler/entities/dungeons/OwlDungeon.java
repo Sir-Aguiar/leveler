@@ -1,5 +1,6 @@
 package org.aguiar.leveler.entities.dungeons;
 
+import org.aguiar.leveler.utils.WorldsManager;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -23,10 +24,10 @@ public class OwlDungeon extends Dungeon {
   }
 
   public void teleportPlayer(Player player) {
-    player.teleport(spawnLocation);
+    WorldsManager.loadPlayers(player, spawnLocation);
   }
 
-  public void teleportPlayers(List<Player> players) {
+  public void teleportPlayer(List<Player> players) {
     players.forEach(this::teleportPlayer);
   }
 }

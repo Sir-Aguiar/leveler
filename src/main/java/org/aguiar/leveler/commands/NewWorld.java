@@ -24,7 +24,7 @@ public class NewWorld implements CommandExecutor {
       return false;
     }
 
-    String worldName = "_raid_" + player.getUniqueId() + System.currentTimeMillis();
+    String worldName = "raid_" + player.getUniqueId() + "_" + System.currentTimeMillis();
 
     World raidWorld = WorldsManager.createWorld(worldName);
     Location dungeonLocation = new Location(raidWorld, 0, -61, 0);

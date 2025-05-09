@@ -8,6 +8,7 @@ import org.aguiar.leveler.commands.StartRaid;
 import org.aguiar.leveler.database.Database;
 import org.aguiar.leveler.listeners.LevelUpListener;
 import org.aguiar.leveler.listeners.PlayerJoin;
+import org.aguiar.leveler.listeners.PlayerLeave;
 import org.aguiar.leveler.listeners.RaidZombieDeathListener;
 import org.aguiar.leveler.utils.SchematicsManager;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public final class Leveler extends JavaPlugin {
 
     SchematicsManager.loadSchematicsFromResource(this);
 
-    registerEvents();
+    registerListeners();
     registerCommands();
 
     Bukkit.getConsoleSender().sendMessage(String.format("[%s] - Enabled Successfully", getName().toUpperCase()));
@@ -40,8 +41,9 @@ public final class Leveler extends JavaPlugin {
     Bukkit.getConsoleSender().sendMessage(String.format("[%s] - Disabled Successfully", getName().toUpperCase()));
   }
 
-  public void registerEvents() {
+  public void registerListeners() {
     getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
+    getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
     getServer().getPluginManager().registerEvents(new LevelUpListener(this), this);
     getServer().getPluginManager().registerEvents(new RaidZombieDeathListener(this), this);
   }
