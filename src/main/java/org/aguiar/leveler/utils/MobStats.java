@@ -36,7 +36,7 @@ public class MobStats {
 
     double xpMultiplier = 1.0;
 
-    if (zombieClass.equals(ZombieClasses.BOSS)) xpMultiplier = 1.15
+    if (zombieClass.equals(ZombieClasses.BOSS)) xpMultiplier = 1.15;
 
     double scaledXP = MOB_BASE_XP * scalingFactor * xpMultiplier;
 
