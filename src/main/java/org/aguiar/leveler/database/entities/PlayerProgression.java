@@ -17,11 +17,27 @@ public class PlayerProgression {
   @DatabaseField(defaultValue = "0")
   private int skillPoints;
 
+  @DatabaseField(defaultValue = "0")
+  private float rankProgression;
+
+  @DatabaseField(defaultValue = "C")
+  private char rank;
+
   public PlayerProgression(String playerId) {
     this.playerId = playerId;
     this.playerLevel = 1;
-    this.playerExperience = 0;
+    this.playerExperience = 0.0f;
     this.skillPoints = 0;
+    this.rankProgression = 0.0f;
+    this.rank = 'C';
+  }
+
+  public float getRankProgression() {
+    return rankProgression;
+  }
+
+  public char getRank() {
+    return rank;
   }
 
   public PlayerProgression() {
