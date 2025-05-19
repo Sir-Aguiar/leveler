@@ -48,12 +48,12 @@ public class RaidZombie {
 
     // Metadata
     zombie.setMetadata("isRaid", new FixedMetadataValue(plugin, true));
-    zombie.setMetadata("xpDrop", new FixedMetadataValue(plugin, MobStats.getZombieScaledXp(playerData.getPlayerLevel(), ZombieClasses.BOSS)));
+    zombie.setMetadata("xpDrop", new FixedMetadataValue(plugin, MobStats.getScaledXP(playerData, ZombieClasses.BOSS)));
     zombie.setMetadata("type", new FixedMetadataValue(plugin, ZombieClasses.BOSS));
     zombie.setAdult();
 
     plugin.getLogger().info(String.format("[ZombieSpawn] Type: BOSS, HP: %.2f, Damage: %.2f, XP Drop: %.1f", zombieHp, zombieDamage,
-            MobStats.getZombieScaledXp(playerData.getPlayerLevel(), ZombieClasses.BOSS)));
+            MobStats.getScaledXP(playerData, ZombieClasses.BOSS)));
 
     return zombie;
   }
@@ -84,11 +84,11 @@ public class RaidZombie {
 
     // Metadata
     zombie.setMetadata("isRaid", new FixedMetadataValue(plugin, true));
-    zombie.setMetadata("xpDrop", new FixedMetadataValue(plugin, MobStats.getZombieScaledXp(playerData.getPlayerLevel(), ZombieClasses.SOLDIER)));
+    zombie.setMetadata("xpDrop", new FixedMetadataValue(plugin,  MobStats.getScaledXP(playerData, ZombieClasses.SOLDIER)));
     zombie.setMetadata("type", new FixedMetadataValue(plugin, ZombieClasses.BOSS));
     zombie.setAdult();
 
-    plugin.getLogger().info(String.format("[ZombieSpawn] Type: SOLDIER, HP: %.2f, Damage: %.2f, XP Drop: %1f", zombieHp, zombieDamage, MobStats.getZombieScaledXp(playerData.getPlayerLevel(), ZombieClasses.BOSS)));
+    plugin.getLogger().info(String.format("[ZombieSpawn] Type: SOLDIER, HP: %.2f, Damage: %.2f, XP Drop: %1f", zombieHp, zombieDamage, MobStats.getScaledXP(playerData, ZombieClasses.SOLDIER)));
 
     return zombie;
   }
