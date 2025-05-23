@@ -25,7 +25,9 @@ public final class Leveler extends JavaPlugin {
   @Override
   public void onEnable() {
     getDataFolder().mkdirs();
+
     getConfig().options().copyDefaults();
+
     saveDefaultConfig();
 
     startDatabase();

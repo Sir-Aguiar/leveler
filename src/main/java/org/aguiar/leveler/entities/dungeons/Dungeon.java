@@ -45,14 +45,14 @@ public abstract class Dungeon {
 
     this.world = createWorld();
     this.schematicFile = new File(plugin.getDataFolder(), "schematics" + File.separator + dungeonId + ".schem");
-
     pasteSchem();
+
+    dungeonConfig.loadConfig();
 
     Map<String, Object> spawnPoint = (Map<String, Object>) dungeonConfig.getConfig().getList("spawn_points").getFirst();
     double x = ((Number) spawnPoint.get("x")).doubleValue();
     double y = ((Number) spawnPoint.get("y")).doubleValue();
     double z = ((Number) spawnPoint.get("z")).doubleValue();
-
     this.spawnLocation = new Location(this.world, x, y, z);
   }
 
@@ -104,7 +104,19 @@ public abstract class Dungeon {
     return schem;
   }
 
+  public Location getSpawnLocation() {
+    return spawnLocation;
+  }
+
+  public World getWorld() {
+    return world;
+  }
+
   public String getDungeonId() {
     return dungeonId;
+  }
+
+  public DungeonConfiguration getDungeonConfig() {
+    return dungeonConfig;
   }
 }

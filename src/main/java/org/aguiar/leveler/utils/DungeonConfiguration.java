@@ -6,6 +6,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class DungeonConfiguration {
   private final Plugin plugin;
@@ -16,32 +17,38 @@ public class DungeonConfiguration {
   public DungeonConfiguration(Plugin plugin, String dungeonId) {
     this.plugin = plugin;
     this.dungeonId = dungeonId;
-    this.loadConfig();
   }
 
-  public void loadConfig() {
+  public boolean loadConfig() {
     File dungeonFolder = new File(plugin.getDataFolder(), "dungeons");
+    configFile = new File(dungeonFolder, dungeonId + ".yml");
 
     if (!dungeonFolder.exists()) {
       dungeonFolder.mkdirs();
     }
 
-    configFile = new File(dungeonFolder, dungeonId + ".yml");
-
     if (!configFile.exists()) {
       try {
         configFile.createNewFile();
       } catch (IOException e) {
-        e.printStackTrace();
+        plugin.getLogger().log(Level.SEVERE, "Não foi possível criar o arquivo de configuração da dungeon: " + dungeonId + ".yml", e);
+        return false;
       }
     }
 
-    config = YamlConfiguration.loadConfiguration(configFile);
+    try {
+      config = YamlConfiguration.loadConfiguration(configFile);
+      return true;
+    } catch (Exception e) {
+      plugin.getLogger().log(Level.SEVERE, "Erro ao carregar a configuração da dungeon: " + dungeonId + ".yml. O arquivo pode estar corrompido ou inacessível.", e);
+      this.config = null;
+      return false;
+    }
   }
 
   public FileConfiguration getConfig() {
     if (config == null) {
-      loadConfig();
+      throw new IllegalStateException("A configuração da dungeon '" + dungeonId + "' não foi carregada ou está corrompida.");
     }
 
     return config;
@@ -49,14 +56,14 @@ public class DungeonConfiguration {
 
   public void saveConfig() {
     if (config == null || configFile == null) {
+      plugin.getLogger().warning("Não foi possível salvar a configuração da dungeon " + dungeonId + ": Configuração ou arquivo não inicializado. Chame .load() primeiro e verifique o retorno.");
       return;
     }
 
     try {
       getConfig().save(configFile);
     } catch (IOException ex) {
-      plugin.getLogger().severe("Não foi possível salvar a configuração da dungeon " + dungeonId);
-      ex.printStackTrace();
+      plugin.getLogger().log(Level.SEVERE, "Não foi possível salvar a configuração da dungeon " + dungeonId, ex);
     }
   }
 }
