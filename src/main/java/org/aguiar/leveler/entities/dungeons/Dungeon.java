@@ -93,6 +93,7 @@ public abstract class Dungeon {
     World createdWorld = WorldsManager.createWorld(worldName);
 
     createdWorld.setMetadata("dungeonId", new FixedMetadataValue(plugin, getDungeonId()));
+    createdWorld.setMetadata("raidProgression", new FixedMetadataValue(plugin, 0));
 
     createdWorld.setGameRule(GameRule.DO_PATROL_SPAWNING, false);
     createdWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);

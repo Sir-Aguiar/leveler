@@ -36,9 +36,14 @@ public class PlayerInteract implements Listener {
     Material itemMaterial = itemInHand.getType();
 
     Player player = event.getPlayer();
+
+    Location clickedPosition = event.getClickedBlock().getLocation();
+
+    player.sendMessage(String.format("X: %.1f, Y: %.1f, Z: %.1f", clickedPosition.getX(), clickedPosition.getY(), clickedPosition.getZ()));
+
     World dungeonWorld = player.getWorld();
 
-    boolean hasRequiredMetadata = dungeonWorld.hasMetadata("dungeonId");
+    boolean hasRequiredMetadata = dungeonWorld.hasMetadata("dungeonId") && dungeonWorld.hasMetadata("raidProgression");
 
     if (!hasRequiredMetadata) return;
 
@@ -55,7 +60,6 @@ public class PlayerInteract implements Listener {
       List<Map<String, Object>> spawnPoints = (List<Map<String, Object>>) dungeonConfiguration.getConfig().getList("spawn_points");
       assert spawnPoints != null;
 
-      Location clickedPosition = event.getClickedBlock().getLocation();
 
       Map<String, Object> newSpawn = Map.of("x", clickedPosition.getX(), "y", clickedPosition.getY(), "z", clickedPosition.getZ());
 
@@ -74,6 +78,5 @@ public class PlayerInteract implements Listener {
     } else {
       player.sendMessage(ChatColor.RED + "Não foi possível carregar configurações da dungeon, verifique os logs do servidor");
     }
-
   }
 }
