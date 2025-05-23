@@ -12,33 +12,71 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import org.aguiar.leveler.Leveler;
+import org.aguiar.leveler.utils.DungeonConfiguration;
+import org.aguiar.leveler.utils.WorldsManager;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
+import java.util.Map;
 
 public abstract class Dungeon {
-  private final String name;
-  private final Location dungeonLocation;
-  private final File file;
+  private final Leveler plugin;
+  private final Player player;
+  private final DungeonConfiguration dungeonConfig;
+  private final File schematicFile;
+  private final String dungeonId;
+  private final World world;
+  private final Location spawnLocation;
   private Clipboard schem;
 
-  public Dungeon(String dungeonName, String schemPath, Location dungeonLocation, World world) {
-    this.file = new File(schemPath);
 
-    ClipboardFormat format = ClipboardFormats.findByFile(file);
+  public Dungeon(String dungeonId, Leveler plugin, Player player) {
+    this.plugin = plugin;
+    this.dungeonId = dungeonId;
+    this.dungeonConfig = new DungeonConfiguration(plugin, dungeonId);
+    this.player = player;
 
-    try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+    this.world = createWorld();
+    this.schematicFile = new File(plugin.getDataFolder(), "schematics" + File.separator + dungeonId + ".schem");
+
+    pasteSchem();
+
+    Map<String, Object> spawnPoint = (Map<String, Object>) dungeonConfig.getConfig().getList("spawn_points").getFirst();
+    double x = ((Number) spawnPoint.get("x")).doubleValue();
+    double y = ((Number) spawnPoint.get("y")).doubleValue();
+    double z = ((Number) spawnPoint.get("z")).doubleValue();
+
+    this.spawnLocation = new Location(this.world, x, y, z);
+  }
+
+  public void teleportPlayer(Player player) {
+    WorldsManager.loadPlayers(player, spawnLocation);
+  }
+
+  public void teleportPlayer(List<Player> players) {
+    players.forEach(this::teleportPlayer);
+  }
+
+  public void pasteSchem() {
+    ClipboardFormat format = ClipboardFormats.findByFile(schematicFile);
+
+    try (ClipboardReader reader = format.getReader(new FileInputStream(schematicFile))) {
       schem = reader.read();
     } catch (Exception e) {
       e.printStackTrace();
     }
 
     WorldEditPlugin worldEditPlugin = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
+
     com.sk89q.worldedit.world.World worldEditWorld = BukkitAdapter.adapt(world);
-    BlockVector3 pasteOrigin = BlockVector3.at(dungeonLocation.getX(), dungeonLocation.getY(), dungeonLocation.getZ());
+    BlockVector3 pasteOrigin = BlockVector3.at(0.0, -60.0, 0.0);
 
     try (EditSession editSession = worldEditPlugin.getWorldEdit().newEditSession(worldEditWorld)) {
       Operation operation = new ClipboardHolder(this.getSchem()).createPaste(editSession).to(pasteOrigin).ignoreAirBlocks(false).build();
@@ -46,24 +84,27 @@ public abstract class Dungeon {
     } catch (WorldEditException e) {
       e.printStackTrace();
     }
+  }
 
-    this.name = dungeonName;
-    this.dungeonLocation = dungeonLocation;
+  public World createWorld() {
+    String worldName = "dungeon_" + player.getUniqueId() + "_" + System.currentTimeMillis();
+
+    World createdWorld = WorldsManager.createWorld(worldName);
+
+    createdWorld.setGameRule(GameRule.DO_PATROL_SPAWNING, false);
+    createdWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+    createdWorld.setGameRule(GameRule.FALL_DAMAGE, false);
+
+    createdWorld.setTime(24000);
+
+    return createdWorld;
   }
 
   public Clipboard getSchem() {
     return schem;
   }
 
-  public File getFile() {
-    return file;
-  }
-
-  public Location getDungeonLocation() {
-    return dungeonLocation;
-  }
-
-  public String getName() {
-    return name;
+  public String getDungeonId() {
+    return dungeonId;
   }
 }

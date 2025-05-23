@@ -10,7 +10,7 @@ import org.aguiar.leveler.listeners.LevelUpListener;
 import org.aguiar.leveler.listeners.PlayerJoin;
 import org.aguiar.leveler.listeners.PlayerLeave;
 import org.aguiar.leveler.listeners.RaidZombieDeathListener;
-import org.aguiar.leveler.utils.SchematicsManager;
+import org.aguiar.leveler.utils.ConfigurationsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,10 +25,12 @@ public final class Leveler extends JavaPlugin {
   @Override
   public void onEnable() {
     getDataFolder().mkdirs();
+    getConfig().options().copyDefaults();
+    saveDefaultConfig();
 
     startDatabase();
 
-    SchematicsManager.loadSchematicsFromResource(this);
+    ConfigurationsManager.loadSources(this);
 
     registerListeners();
     registerCommands();

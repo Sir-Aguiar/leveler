@@ -1,0 +1,12 @@
+name: "Dungeon Beta"
+spawn_points:
+  - x: -11.5
+    y: -60.0
+    z: -11.5
+scan_bounds:
+  min_x: 0
+  min_y: 0
+  min_z: 0
+  max_x: 0
+  max_y: 0
+  max_z: 0
