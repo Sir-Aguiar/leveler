@@ -8,10 +8,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class LevelUpListener implements Listener {
+public class LevelUp implements Listener {
   private final Leveler plugin;
 
-  public LevelUpListener(Leveler plugin) {
+  public LevelUp(Leveler plugin) {
     this.plugin = plugin;
   }
 

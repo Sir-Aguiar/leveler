@@ -6,10 +6,7 @@ import org.aguiar.leveler.commands.NewWorld;
 import org.aguiar.leveler.commands.PlayerReport;
 import org.aguiar.leveler.commands.StartRaid;
 import org.aguiar.leveler.database.Database;
-import org.aguiar.leveler.listeners.LevelUpListener;
-import org.aguiar.leveler.listeners.PlayerJoin;
-import org.aguiar.leveler.listeners.PlayerLeave;
-import org.aguiar.leveler.listeners.RaidZombieDeathListener;
+import org.aguiar.leveler.listeners.*;
 import org.aguiar.leveler.utils.ConfigurationsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public final class Leveler extends JavaPlugin {
   public final File databaseFile = new File(getDataFolder(), "leveler.db");
@@ -47,16 +45,17 @@ public final class Leveler extends JavaPlugin {
 
   public void registerListeners() {
     getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
-    getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
-    getServer().getPluginManager().registerEvents(new LevelUpListener(this), this);
-    getServer().getPluginManager().registerEvents(new RaidZombieDeathListener(this), this);
+    getServer().getPluginManager().registerEvents(new PlayerQuit(), this);
+    getServer().getPluginManager().registerEvents(new LevelUp(this), this);
+    getServer().getPluginManager().registerEvents(new EntityDeath(this), this);
+    getServer().getPluginManager().registerEvents(new PlayerInteract(this), this);
   }
 
   public void registerCommands() {
-    this.getCommand("start-raid").setExecutor(new StartRaid(this));
-    this.getCommand("leveler-stats").setExecutor(new PlayerReport(this));
-    this.getCommand("killer-bone").setExecutor(new GetEntityKiller());
-    this.getCommand("new-world").setExecutor(new NewWorld(this));
+    Objects.requireNonNull(this.getCommand("start-raid")).setExecutor(new StartRaid(this));
+    Objects.requireNonNull(this.getCommand("leveler-stats")).setExecutor(new PlayerReport(this));
+    Objects.requireNonNull(this.getCommand("killer-bone")).setExecutor(new GetEntityKiller());
+    Objects.requireNonNull(this.getCommand("new-world")).setExecutor(new NewWorld(this));
   }
 
   public void startDatabase() {

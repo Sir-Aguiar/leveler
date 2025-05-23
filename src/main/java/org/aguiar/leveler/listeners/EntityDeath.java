@@ -20,15 +20,15 @@ import org.bukkit.metadata.MetadataValue;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class RaidZombieDeathListener implements Listener {
+public class EntityDeath implements Listener {
   private final Leveler plugin;
 
-  public RaidZombieDeathListener(Leveler plugin) {
+  public EntityDeath(Leveler plugin) {
     this.plugin = plugin;
   }
 
   @EventHandler
-  public void onDeath(EntityDeathEvent event) {
+  public void onRaidEntityDeath(EntityDeathEvent event) {
     if (!(event.getEntity() instanceof Zombie entity)) {
       return;
     }

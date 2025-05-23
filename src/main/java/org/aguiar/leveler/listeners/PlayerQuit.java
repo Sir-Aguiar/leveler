@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
 
-public class PlayerLeave implements Listener {
+public class PlayerQuit implements Listener {
   @EventHandler
   public void onLeave(PlayerQuitEvent event) {
     Player player = event.getPlayer();

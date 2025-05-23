@@ -20,6 +20,7 @@ import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,6 +91,8 @@ public abstract class Dungeon {
     String worldName = "dungeon_" + player.getUniqueId() + "_" + System.currentTimeMillis();
 
     World createdWorld = WorldsManager.createWorld(worldName);
+
+    createdWorld.setMetadata("dungeonId", new FixedMetadataValue(plugin, getDungeonId()));
 
     createdWorld.setGameRule(GameRule.DO_PATROL_SPAWNING, false);
     createdWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);
