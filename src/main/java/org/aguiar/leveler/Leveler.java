@@ -1,10 +1,7 @@
 package org.aguiar.leveler;
 
 
-import org.aguiar.leveler.commands.GetEntityKiller;
-import org.aguiar.leveler.commands.NewWorld;
-import org.aguiar.leveler.commands.PlayerReport;
-import org.aguiar.leveler.commands.StartRaid;
+import org.aguiar.leveler.commands.*;
 import org.aguiar.leveler.database.Database;
 import org.aguiar.leveler.listeners.*;
 import org.aguiar.leveler.utils.ConfigurationsManager;
@@ -48,7 +45,8 @@ public final class Leveler extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new PlayerQuit(), this);
     getServer().getPluginManager().registerEvents(new LevelUp(this), this);
     getServer().getPluginManager().registerEvents(new EntityDeath(this), this);
-    getServer().getPluginManager().registerEvents(new PlayerInteract(this), this);
+    getServer().getPluginManager().registerEvents(new SpawnSetListener(this), this);
+    getServer().getPluginManager().registerEvents(new DefineBarriersListener(this), this);
   }
 
   public void registerCommands() {
@@ -56,6 +54,7 @@ public final class Leveler extends JavaPlugin {
     Objects.requireNonNull(this.getCommand("leveler-stats")).setExecutor(new PlayerReport(this));
     Objects.requireNonNull(this.getCommand("killer-bone")).setExecutor(new GetEntityKiller());
     Objects.requireNonNull(this.getCommand("new-world")).setExecutor(new NewWorld(this));
+    Objects.requireNonNull(this.getCommand("define-barriers")).setExecutor(new DefineBarriers(this));
   }
 
   public void startDatabase() {
