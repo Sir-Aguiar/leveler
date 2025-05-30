@@ -31,9 +31,13 @@ public abstract class Raid {
     playerProgressions.add(playerProgression);
   }
 
-  public Monster spawnMob(Location location, RaidMob raidMob) {
-    World world = location.getWorld();
-    assert world != null;
+  public Monster spawnMob(World world, RaidMob raidMob) {
+    Location location = new Location(
+            world,
+            raidMob.spawnLocation().get("x"),
+            raidMob.spawnLocation().get("y"),
+            raidMob.spawnLocation().get("z")
+    );
 
     Monster spawnedEntity = (Monster) world.spawnEntity(location, raidMob.entityType());
 

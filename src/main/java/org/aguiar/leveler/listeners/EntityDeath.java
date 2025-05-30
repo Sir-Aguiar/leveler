@@ -5,11 +5,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.database.entities.PlayerProgression;
 import org.aguiar.leveler.database.repositories.PlayerProgressionRepository;
+import org.aguiar.leveler.entities.MobClass;
 import org.aguiar.leveler.entities.ZombieClasses;
 import org.aguiar.leveler.events.LevelUpEvent;
 import org.aguiar.leveler.utils.PlayerLevelProgression;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -29,7 +31,7 @@ public class EntityDeath implements Listener {
 
   @EventHandler
   public void onRaidEntityDeath(EntityDeathEvent event) {
-    if (!(event.getEntity() instanceof Zombie entity)) {
+    if (!(event.getEntity() instanceof Monster entity)) {
       return;
     }
 
@@ -58,7 +60,7 @@ public class EntityDeath implements Listener {
       return;
     }
 
-    String zombieType = entity.getMetadata("type").stream().findFirst().map(MetadataValue::asString).orElse(ZombieClasses.SOLDIER.toString());
+    String mobClass = entity.getMetadata("type").stream().findFirst().map(MetadataValue::asString).orElse(MobClass.SOLDIER.toString());
     float xpDrop = entity.getMetadata("xpDrop").stream().findFirst().map(MetadataValue::asFloat).orElse(0.0f);
 
     float playerExp = playerData.getPlayerExperience();

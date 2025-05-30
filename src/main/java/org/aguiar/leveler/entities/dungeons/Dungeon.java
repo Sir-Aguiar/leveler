@@ -79,9 +79,13 @@ public abstract class Dungeon {
     com.sk89q.worldedit.world.World worldEditWorld = BukkitAdapter.adapt(world);
     BlockVector3 pasteOrigin = BlockVector3.at(0.0, -60.0, 0.0);
 
-    try (EditSession editSession = worldEditPlugin.getWorldEdit().newEditSession(worldEditWorld)) {
-      Operation operation = new ClipboardHolder(this.getSchem()).createPaste(editSession).to(pasteOrigin).ignoreAirBlocks(false).build();
-      Operations.complete(operation);
+    try {
+      assert worldEditPlugin != null;
+
+      try (EditSession editSession = worldEditPlugin.getWorldEdit().newEditSession(worldEditWorld)) {
+        Operation operation = new ClipboardHolder(this.getSchem()).createPaste(editSession).to(pasteOrigin).ignoreAirBlocks(false).build();
+        Operations.complete(operation);
+      }
     } catch (WorldEditException e) {
       e.printStackTrace();
     }
