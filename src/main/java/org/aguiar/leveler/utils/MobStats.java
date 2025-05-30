@@ -1,7 +1,9 @@
 package org.aguiar.leveler.utils;
 
 import org.aguiar.leveler.database.entities.PlayerProgression;
-import org.aguiar.leveler.entities.ZombieClasses;
+import org.aguiar.leveler.entities.MobClass;
+
+import java.util.List;
 
 public class MobStats {
   public static final double MOB_BASE_XP = 10.0;
@@ -17,7 +19,7 @@ public class MobStats {
   private static final double ZOMBIE_BOSS_HP = 10.0;
   private static final double ZOMBIE_BOSS_DAMAGE = 1.0;
 
-  public static double getScaledXP(PlayerProgression playerData, ZombieClasses zombieClass) {
+  public static double getScaledXP(PlayerProgression playerData, MobClass mobClass) {
     double playerLevel = playerData.getPlayerLevel();
     double playerExperience = playerData.getPlayerExperience();
 
@@ -36,11 +38,43 @@ public class MobStats {
 
     double xpMultiplier = 1.0;
 
-    if (zombieClass.equals(ZombieClasses.BOSS)) xpMultiplier = 1.15;
+    if (mobClass.equals(MobClass.BOSS)) xpMultiplier = 1.25;
 
-    double scaledXP = MOB_BASE_XP * scalingFactor * xpMultiplier;
+    return MOB_BASE_XP * scalingFactor * xpMultiplier;
 
-    return scaledXP;
+  }
+
+  public static double getScaledXP(List<PlayerProgression> playerData, MobClass mobClass) {
+    double avarageLevel = 0.0;
+    double avarageExperience = 0.0;
+
+    for (PlayerProgression playerDatum : playerData) {
+      avarageLevel += playerDatum.getPlayerLevel();
+      avarageExperience += playerDatum.getPlayerExperience();
+    }
+
+    avarageLevel = avarageLevel / playerData.size();
+    avarageExperience = avarageExperience / playerData.size();
+
+
+    if (avarageLevel < 1) avarageLevel = 1;
+    // Formula: XP_base * Fator_XP(Nivel) * Multiplicador_por_Classe
+    // Vamos usar uma formula similar: Constante_XP * (Nivel - 1)^P, ou Constante_XP * Nivel^P
+    // Uma forma comum é: XP_base * (1 + Constante_XP * (playerLevel - 1)^P)
+    // Onde P pode ser 1.0, 1.1, ou até perto de 1.388 para manter o ritmo.
+    // Vamos tentar P=1.0 para simplicidade inicial (escalonamento linear do Fator_XP)
+    // Ou P=1.1 ou 1.2 para um crescimento um pouco mais acentuado
+    // Ou P=1.388 para tentar alinhar o ritmo de ganho com o custo de nível
+
+    double scalingFactor = 1.0 + XP_CONSTANT * Math.pow(avarageLevel - 1, XP_POWER);
+
+    if (avarageLevel == 1) scalingFactor = 1.0;
+
+    double xpMultiplier = 1.0;
+
+    if (mobClass.equals(MobClass.BOSS)) xpMultiplier = 1.25;
+
+    return MOB_BASE_XP * scalingFactor * xpMultiplier;
 
   }
 
