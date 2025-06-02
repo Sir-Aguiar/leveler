@@ -19,9 +19,9 @@ public class DungeonConfiguration {
     this.dungeonId = dungeonId;
   }
 
-  public boolean loadConfig() {
-    File dungeonFolder = new File(plugin.getDataFolder(), "dungeons");
-    configFile = new File(dungeonFolder, dungeonId + ".yml");
+  public boolean loadConfig(String fileName) {
+    File dungeonFolder = new File(plugin.getDataFolder(), "dungeons" + File.separator + dungeonId);
+    configFile = new File(dungeonFolder, fileName + ".yml");
 
     if (!dungeonFolder.exists()) {
       dungeonFolder.mkdirs();

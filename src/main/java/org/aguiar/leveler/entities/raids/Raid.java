@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Raid {
+public class Raid {
   private final Leveler plugin;
   private final List<Entity> mobs = new ArrayList<>();
   private List<PlayerProgression> playerProgressions = new ArrayList<>();

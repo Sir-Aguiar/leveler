@@ -60,7 +60,7 @@ public class SpawnSetListener implements Listener {
     String dungeonId = dungeonWorld.getMetadata("dungeonId").stream().findFirst().map(MetadataValue::asString).get();
     DungeonConfiguration dungeonConfiguration = new DungeonConfiguration(plugin, dungeonId);
 
-    if (dungeonConfiguration.loadConfig()) {
+    if (dungeonConfiguration.loadConfig("config")) {
       List<Map<String, Object>> spawnPoints = (List<Map<String, Object>>) dungeonConfiguration.getConfig().getList("spawn_points");
       assert spawnPoints != null;
 

@@ -48,7 +48,7 @@ public abstract class Dungeon {
     this.schematicFile = new File(plugin.getDataFolder(), "schematics" + File.separator + dungeonId + ".schem");
     pasteSchem();
 
-    dungeonConfig.loadConfig();
+    dungeonConfig.loadConfig("config");
 
     Map<String, Object> spawnPoint = (Map<String, Object>) dungeonConfig.getConfig().getList("spawn_points").getFirst();
     double x = ((Number) spawnPoint.get("x")).doubleValue();

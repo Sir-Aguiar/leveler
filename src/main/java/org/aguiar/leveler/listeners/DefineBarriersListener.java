@@ -47,7 +47,7 @@ public class DefineBarriersListener implements Listener {
 
     DungeonConfiguration dungeonConfiguration = new DungeonConfiguration(plugin, dungeonId);
 
-    if (dungeonConfiguration.loadConfig()) {
+    if (dungeonConfiguration.loadConfig("config")) {
       String configName = "level_" + dungeonLevel + "_barriers";
       List<Map<String, Object>> levelBarriers = (List<Map<String, Object>>) dungeonConfiguration.getConfig().getList(configName);
 
