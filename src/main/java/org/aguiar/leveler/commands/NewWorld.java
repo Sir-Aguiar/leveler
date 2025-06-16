@@ -23,6 +23,7 @@ public class NewWorld implements CommandExecutor {
 
     BetaDungeon betaDungeon = new BetaDungeon(plugin, player);
     betaDungeon.teleportPlayer(player);
+    plugin.addActiveDungeon(player.getUniqueId(), betaDungeon);
 
     return true;
   }

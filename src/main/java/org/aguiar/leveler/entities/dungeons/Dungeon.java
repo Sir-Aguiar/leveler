@@ -13,17 +13,18 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import org.aguiar.leveler.Leveler;
+import org.aguiar.leveler.entities.raids.Raid;
+import org.aguiar.leveler.entities.raids.RaidMob;
 import org.aguiar.leveler.utils.DungeonConfiguration;
 import org.aguiar.leveler.utils.WorldsManager;
-import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,17 +32,19 @@ public abstract class Dungeon {
   private final Leveler plugin;
   private final Player player;
   private final DungeonConfiguration dungeonConfig;
+  private final DungeonConfiguration levelsConfig;
   private final File schematicFile;
   private final String dungeonId;
   private final World world;
   private final Location spawnLocation;
   private Clipboard schem;
-
+  private boolean raidStarted = false;
 
   public Dungeon(String dungeonId, Leveler plugin, Player player) {
     this.plugin = plugin;
     this.dungeonId = dungeonId;
     this.dungeonConfig = new DungeonConfiguration(plugin, dungeonId);
+    this.levelsConfig = new DungeonConfiguration(plugin, dungeonId);
     this.player = player;
 
     this.world = createWorld();
@@ -49,11 +52,14 @@ public abstract class Dungeon {
     pasteSchem();
 
     dungeonConfig.loadConfig("config");
+    levelsConfig.loadConfig("levels");
 
     Map<String, Object> spawnPoint = (Map<String, Object>) dungeonConfig.getConfig().getList("spawn_points").getFirst();
+
     double x = ((Number) spawnPoint.get("x")).doubleValue();
     double y = ((Number) spawnPoint.get("y")).doubleValue();
     double z = ((Number) spawnPoint.get("z")).doubleValue();
+
     this.spawnLocation = new Location(this.world, x, y, z);
   }
 
@@ -108,6 +114,50 @@ public abstract class Dungeon {
     return createdWorld;
   }
 
+  public void startRaid() {
+    if (levelsConfig.loadConfig("levels")) {
+      // Pegar a fase da respectiva raid
+      Integer raidProgression = world.getMetadata("raidProgression").stream().findFirst().map(MetadataValue::asInt).get();
+
+      // Mapear os mobs
+      List<Map<String, Object>> mobs = (List<Map<String, Object>>) levelsConfig.getConfig().getList("level_" + (raidProgression + 1) + "_raid.mobs");
+      List<RaidMob> raidMobs = new ArrayList<>();
+      Location playerLocation = player.getLocation();
+
+      Map<String, Double> playerLocationMap = Map.of("x", playerLocation.getX(), "y", playerLocation.getY(), "z", playerLocation.getZ());
+
+      mobs.forEach(mob -> {
+        RaidMob raidMob = new RaidMob((String) mob.get("type"), (String) mob.get("name"), (String) mob.get("entityType"), playerLocationMap);
+        raidMobs.add(raidMob);
+      });
+
+      // Spawnar os mobs
+      Raid currentRaid = new Raid(plugin, player);
+
+      raidMobs.forEach(raidMob -> {
+        currentRaid.spawnMob(world, raidMob);
+      });
+
+      setRaidStarted(true);
+      player.sendMessage(ChatColor.GOLD + "Raid Iniciada");
+    }
+
+
+  }
+
+  public boolean isRaidStarted() {
+    return raidStarted;
+  }
+
+  public void setRaidStarted(boolean raidStarted) {
+    this.raidStarted = raidStarted;
+  }
+
+  public Player getPlayer() {
+    return player;
+  }
+
+
   public Clipboard getSchem() {
     return schem;
   }
@@ -126,5 +176,9 @@ public abstract class Dungeon {
 
   public DungeonConfiguration getDungeonConfig() {
     return dungeonConfig;
+  }
+
+  public DungeonConfiguration getLevelsConfig() {
+    return levelsConfig;
   }
 }

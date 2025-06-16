@@ -1,3 +1,35 @@
+level_1_start_bounds:
+  min_x: -32.0
+  min_y: -60.0
+  min_z: -21.0
+  max_x: -28.0
+  max_y: -55.0
+  max_z: -30.0
+level_1_raid:
+  mobs:
+    - name: "Chefão"
+      mobClass: "BOSS"
+      entityType: "zombie_villager"
+      equipment:
+        HEAD:
+          material: DIAMOND_HELMET
+          amount: 1
+          name: "&cElmo do Chefão"
+          lore:
+            - "&7Proteção Divina"
+          enchantments:
+            protection: 4
+            unbreaking: 3
+        MAIN_HAND:
+          material: NETHERITE_SWORD
+          amount: 1
+          name: "&4Espada do Caos"
+          enchantments:
+            sharpness: 5
+            fire_aspect: 2
+            looting: 3
+            knockback: 1
+
 level_1_barriers:
   - z: -30.0
     y: -60.0

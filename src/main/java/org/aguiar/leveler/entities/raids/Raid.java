@@ -1,47 +1,37 @@
 package org.aguiar.leveler.entities.raids;
 
 import org.aguiar.leveler.Leveler;
-import org.aguiar.leveler.database.entities.PlayerProgression;
-import org.aguiar.leveler.entities.MobClass;
-import org.aguiar.leveler.utils.MobStats;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Raid {
   private final Leveler plugin;
   private final List<Entity> mobs = new ArrayList<>();
-  private List<PlayerProgression> playerProgressions = new ArrayList<>();
+  private final Player player;
 
-  public Raid(Leveler plugin, List<PlayerProgression> playerProgressions) {
+  public Raid(Leveler plugin, Player player) {
     this.plugin = plugin;
-    this.playerProgressions = playerProgressions;
-  }
-
-  public Raid(Leveler plugin, PlayerProgression playerProgression) {
-    this.plugin = plugin;
-    playerProgressions.add(playerProgression);
+    this.player = player;
   }
 
   public Monster spawnMob(World world, RaidMob raidMob) {
     Location location = new Location(
             world,
-            raidMob.spawnLocation().get("x"),
-            raidMob.spawnLocation().get("y"),
-            raidMob.spawnLocation().get("z")
+            raidMob.getSpawnLocation().get("x"),
+            raidMob.getSpawnLocation().get("y"),
+            raidMob.getSpawnLocation().get("z")
     );
 
-    Monster spawnedEntity = (Monster) world.spawnEntity(location, raidMob.entityType());
+    Monster spawnedEntity = (Monster) world.spawnEntity(location, raidMob.getEntityType());
 
-    raidMob.equipments().forEach((slot, mobEquipment) -> {
+    /*raidMob.equipments().forEach((slot, mobEquipment) -> {
       ItemStack itemStack = new ItemStack(Objects.requireNonNull(Material.getMaterial(mobEquipment.material())), 1);
 
       ItemMeta itemMeta = itemStack.getItemMeta();
@@ -59,22 +49,18 @@ public class Raid {
       });
 
       Objects.requireNonNull(spawnedEntity.getEquipment()).setItem(equipmentSlot, itemStack);
-    });
+    });*/
 
 
     spawnedEntity.setMetadata("isRaid", new FixedMetadataValue(plugin, true));
 
-    double xpDrop = MobStats.getScaledXP(playerProgressions, MobClass.valueOf(raidMob.mobClass()));
+    double xpDrop = 2; /*MobStats.getScaledXP(playerProgressions, MobClass.valueOf(raidMob.mobClass()));*/
     spawnedEntity.setMetadata("xpDrop", new FixedMetadataValue(plugin, xpDrop));
 
-    spawnedEntity.setMetadata("type", new FixedMetadataValue(plugin, MobClass.valueOf(raidMob.mobClass())));
+    spawnedEntity.setMetadata("type", new FixedMetadataValue(plugin, raidMob.getMobClass()));
 
     mobs.add(spawnedEntity);
 
     return spawnedEntity;
-  }
-
-  public void startRaid() {
-
   }
 }

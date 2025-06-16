@@ -3,6 +3,7 @@ package org.aguiar.leveler;
 
 import org.aguiar.leveler.commands.*;
 import org.aguiar.leveler.database.Database;
+import org.aguiar.leveler.entities.dungeons.Dungeon;
 import org.aguiar.leveler.listeners.*;
 import org.aguiar.leveler.utils.ConfigurationsManager;
 import org.bukkit.Bukkit;
@@ -11,10 +12,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public final class Leveler extends JavaPlugin {
   public final File databaseFile = new File(getDataFolder(), "leveler.db");
+  public final Map<UUID, Dungeon> activeDungeons = new HashMap<>();
   public Database database;
 
   @Override
@@ -47,6 +52,7 @@ public final class Leveler extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new EntityDeath(this), this);
     getServer().getPluginManager().registerEvents(new SpawnSetListener(this), this);
     getServer().getPluginManager().registerEvents(new DefineBarriersListener(this), this);
+    getServer().getPluginManager().registerEvents(new PlayerMove(this), this);
   }
 
   public void registerCommands() {
@@ -83,5 +89,17 @@ public final class Leveler extends JavaPlugin {
 
       getServer().getPluginManager().disablePlugin(this);
     }
+  }
+
+  public void addActiveDungeon(UUID playerId, Dungeon dungeon) {
+    activeDungeons.put(playerId, dungeon);
+  }
+
+  public void removeActiveDungeon(UUID playerId) {
+    activeDungeons.remove(playerId);
+  }
+
+  public Dungeon getActiveDungeon(UUID playerId) {
+    return activeDungeons.get(playerId);
   }
 }
