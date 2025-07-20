@@ -49,6 +49,7 @@ public final class Leveler extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
     getServer().getPluginManager().registerEvents(new PlayerQuit(), this);
     getServer().getPluginManager().registerEvents(new LevelUp(this), this);
+    getServer().getPluginManager().registerEvents(new RaidEnd(this), this);
     getServer().getPluginManager().registerEvents(new EntityDeath(this), this);
     getServer().getPluginManager().registerEvents(new SpawnSetListener(this), this);
     getServer().getPluginManager().registerEvents(new DefineBarriersListener(this), this);

@@ -3,6 +3,7 @@ package org.aguiar.leveler.events;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class LevelUpEvent extends Event {
   private static final HandlerList handlers = new HandlerList();
@@ -30,7 +31,7 @@ public class LevelUpEvent extends Event {
   }
 
   @Override
-  public HandlerList getHandlers() {
+  public @NotNull HandlerList getHandlers() {
     return handlers;
   }
 

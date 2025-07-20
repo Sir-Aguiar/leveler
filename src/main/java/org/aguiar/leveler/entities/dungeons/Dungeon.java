@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class Dungeon {
   private final Leveler plugin;
@@ -141,8 +142,33 @@ public abstract class Dungeon {
       setRaidStarted(true);
       player.sendMessage(ChatColor.GOLD + "Raid Iniciada");
     }
+  }
+
+  public void upgradeRaid() {
+    int currentProgression = world.getMetadata("raidProgression").stream().findFirst().map(MetadataValue::asInt).orElse(0);
+    int newProgression = currentProgression + 1;
 
 
+    if (newProgression < dungeonConfig.getConfig().getConfigurationSection("levels").getKeys(false).size()) {
+      world.setMetadata("raidProgression", new FixedMetadataValue(plugin, newProgression));
+      setRaidStarted(false);
+      player.sendMessage(ChatColor.GREEN + "Raid atualizada para o nível " + (newProgression + 1));
+    } else {
+      player.sendMessage(ChatColor.RED + "Você já está no nível máximo da raid.");
+    }
+  }
+
+  public void upgradeRaid(int amount) {
+    int currentProgression = world.getMetadata("raidProgression").stream().findFirst().map(MetadataValue::asInt).orElse(0);
+    int newProgression = currentProgression + amount;
+
+
+    if (newProgression < Objects.requireNonNull(dungeonConfig.getConfig().getConfigurationSection("levels")).getKeys(false).size()) {
+      world.setMetadata("raidProgression", new FixedMetadataValue(plugin, newProgression));
+      player.sendMessage(ChatColor.GREEN + "Raid atualizada para o nível " + (newProgression + 1));
+    } else {
+      player.sendMessage(ChatColor.RED + "Você já está no nível máximo da raid.");
+    }
   }
 
   public boolean isRaidStarted() {
@@ -156,7 +182,6 @@ public abstract class Dungeon {
   public Player getPlayer() {
     return player;
   }
-
 
   public Clipboard getSchem() {
     return schem;

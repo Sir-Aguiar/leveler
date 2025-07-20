@@ -6,14 +6,14 @@ import org.aguiar.leveler.Leveler;
 import org.aguiar.leveler.database.entities.PlayerProgression;
 import org.aguiar.leveler.database.repositories.PlayerProgressionRepository;
 import org.aguiar.leveler.entities.MobClass;
-import org.aguiar.leveler.entities.ZombieClasses;
+import org.aguiar.leveler.entities.dungeons.Dungeon;
 import org.aguiar.leveler.events.LevelUpEvent;
+import org.aguiar.leveler.events.RaidEndEvent;
 import org.aguiar.leveler.utils.PlayerLevelProgression;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -93,5 +93,15 @@ public class EntityDeath implements Listener {
     float xpNeededForCurrentLevel = PlayerLevelProgression.experienceForCurrentLevel(playerData.getPlayerLevel());
     String message = String.format("%s%sPlayer XP: %s%.2f/%.2f", ChatColor.GREEN, ChatColor.BOLD, ChatColor.GOLD, playerData.getPlayerExperience(), xpNeededForCurrentLevel);
     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+
+    if (mobClass.equalsIgnoreCase("BOSS")) {
+      String bossMessage = String.format("%s%sVocê derrotou %s!", ChatColor.GOLD, ChatColor.BOLD, entity.getCustomName());
+      player.sendMessage(bossMessage);
+
+      String dungeonId = player.getWorld().getMetadata("dungeonId").stream().findFirst().map(MetadataValue::asString).get();
+      Dungeon dungeon = plugin.getActiveDungeon(UUID.fromString(dungeonId));
+
+      Bukkit.getPluginManager().callEvent(new RaidEndEvent(player, dungeon));
+    }
   }
 }
