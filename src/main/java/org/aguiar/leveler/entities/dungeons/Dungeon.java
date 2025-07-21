@@ -18,6 +18,8 @@ import org.aguiar.leveler.entities.raids.RaidMob;
 import org.aguiar.leveler.utils.DungeonConfiguration;
 import org.aguiar.leveler.utils.WorldsManager;
 import org.bukkit.*;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -128,7 +130,7 @@ public abstract class Dungeon {
       Map<String, Double> playerLocationMap = Map.of("x", playerLocation.getX(), "y", playerLocation.getY(), "z", playerLocation.getZ());
 
       mobs.forEach(mob -> {
-        RaidMob raidMob = new RaidMob((String) mob.get("type"), (String) mob.get("name"), (String) mob.get("entityType"), playerLocationMap);
+        RaidMob raidMob = new RaidMob((String) mob.get("name"), (String) mob.get("mobClass"), (String) mob.get("entityType"), playerLocationMap);
         raidMobs.add(raidMob);
       });
 
@@ -148,8 +150,15 @@ public abstract class Dungeon {
     int currentProgression = world.getMetadata("raidProgression").stream().findFirst().map(MetadataValue::asInt).orElse(0);
     int newProgression = currentProgression + 1;
 
+    Integer dungeonLevels = dungeonConfig.getConfig().getInt("levels");
 
-    if (newProgression < dungeonConfig.getConfig().getConfigurationSection("levels").getKeys(false).size()) {
+    if (dungeonLevels == null) {
+      System.out.println(dungeonConfig.getConfig().toString());
+      player.sendMessage(ChatColor.RED + "Configuração de níveis da dungeon não encontrada.");
+      return;
+    }
+
+    if (newProgression <= dungeonLevels) {
       world.setMetadata("raidProgression", new FixedMetadataValue(plugin, newProgression));
       setRaidStarted(false);
       player.sendMessage(ChatColor.GREEN + "Raid atualizada para o nível " + (newProgression + 1));
@@ -162,8 +171,14 @@ public abstract class Dungeon {
     int currentProgression = world.getMetadata("raidProgression").stream().findFirst().map(MetadataValue::asInt).orElse(0);
     int newProgression = currentProgression + amount;
 
+    ConfigurationSection dungeonLevels = dungeonConfig.getConfig().getConfigurationSection("levels");
 
-    if (newProgression < Objects.requireNonNull(dungeonConfig.getConfig().getConfigurationSection("levels")).getKeys(false).size()) {
+    if (dungeonLevels == null) {
+      player.sendMessage(ChatColor.RED + "Configuração de níveis da dungeon não encontrada.");
+      return;
+    }
+
+    if (newProgression < dungeonLevels.getKeys(false).size()) {
       world.setMetadata("raidProgression", new FixedMetadataValue(plugin, newProgression));
       player.sendMessage(ChatColor.GREEN + "Raid atualizada para o nível " + (newProgression + 1));
     } else {

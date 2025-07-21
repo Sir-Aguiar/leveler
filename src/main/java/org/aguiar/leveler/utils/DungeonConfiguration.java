@@ -66,4 +66,6 @@ public class DungeonConfiguration {
       plugin.getLogger().log(Level.SEVERE, "Não foi possível salvar a configuração da dungeon " + dungeonId, ex);
     }
   }
+
+
 }

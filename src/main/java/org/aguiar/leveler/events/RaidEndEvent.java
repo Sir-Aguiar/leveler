@@ -13,7 +13,7 @@ public class RaidEndEvent extends Event {
 
 
   public RaidEndEvent(Player player, Dungeon dungeon) {
-    super(true);
+    super();
 
     this.player = player;
     this.dungeon = dungeon;

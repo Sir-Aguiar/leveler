@@ -22,15 +22,10 @@ public class Raid {
   }
 
   public Monster spawnMob(World world, RaidMob raidMob) {
-    Location location = new Location(
-            world,
-            raidMob.getSpawnLocation().get("x"),
-            raidMob.getSpawnLocation().get("y"),
-            raidMob.getSpawnLocation().get("z")
-    );
+    Location location = new Location(world, raidMob.getSpawnLocation().get("x"), raidMob.getSpawnLocation().get("y"), raidMob.getSpawnLocation().get("z"));
 
     Monster spawnedEntity = (Monster) world.spawnEntity(location, raidMob.getEntityType());
-
+    spawnedEntity.setCustomName(raidMob.getName());
     /*raidMob.equipments().forEach((slot, mobEquipment) -> {
       ItemStack itemStack = new ItemStack(Objects.requireNonNull(Material.getMaterial(mobEquipment.material())), 1);
 

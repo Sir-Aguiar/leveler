@@ -35,14 +35,17 @@ public class EntityDeath implements Listener {
       return;
     }
 
+    Player player = entity.getKiller();
+
+    if (player == null) return;
+
+    String dungeonId = player.getWorld().getMetadata("dungeonId").stream().findFirst().map(MetadataValue::asString).orElse("%not_in_a_dungeon%");
+
+    if (dungeonId.equals("%not_in_a_dungeon%")) return;
+
     boolean hasRequiredMeta = entity.hasMetadata("isRaid") && entity.hasMetadata("type") && entity.hasMetadata("xpDrop");
 
-    if (!hasRequiredMeta) {
-      return;
-    }
-
-    Player player = entity.getKiller();
-    assert player != null;
+    if (!hasRequiredMeta) return;
 
     UUID playerId = player.getUniqueId();
 
@@ -98,8 +101,7 @@ public class EntityDeath implements Listener {
       String bossMessage = String.format("%s%sVocê derrotou %s!", ChatColor.GOLD, ChatColor.BOLD, entity.getCustomName());
       player.sendMessage(bossMessage);
 
-      String dungeonId = player.getWorld().getMetadata("dungeonId").stream().findFirst().map(MetadataValue::asString).get();
-      Dungeon dungeon = plugin.getActiveDungeon(UUID.fromString(dungeonId));
+      Dungeon dungeon = plugin.getActiveDungeon(playerId);
 
       Bukkit.getPluginManager().callEvent(new RaidEndEvent(player, dungeon));
     }
