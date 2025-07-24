@@ -44,13 +44,13 @@ public class PlayerReport implements CommandExecutor {
       int skillPoints = playerData.getSkillPoints();
 
       // Calculate XP needed for next level
-      float experienceForNextLevel = PlayerLevelProgression.experienceForNextLevel((int) playerLevel);
+      float experienceForNextLevel = PlayerLevelProgression.experienceForCurrentLevel((int) playerLevel);
 
       AtomicInteger lineLength = new AtomicInteger();
 
-      String level = ChatColor.YELLOW + "Level: " + ChatColor.GREEN + (int) playerLevel + "\n";
-      String experience = ChatColor.YELLOW + "Experience: " + ChatColor.GREEN + playerExp + " / " + (experienceForNextLevel) + "\n";
-      String skill = ChatColor.YELLOW + "Skill Points: " + ChatColor.GREEN + skillPoints + "\n";
+      String level = String.format("%sLevel: %s%d\n", ChatColor.YELLOW, ChatColor.GREEN, (int) playerLevel);
+      String experience = String.format("%sExperience: %s%.2f / %.2f\n", ChatColor.YELLOW, ChatColor.GREEN, playerExp, experienceForNextLevel);
+      String skill = String.format("%sSkill Points: %s%d\n", ChatColor.YELLOW, ChatColor.GREEN, skillPoints);
 
       String message = level + experience + skill;
 
