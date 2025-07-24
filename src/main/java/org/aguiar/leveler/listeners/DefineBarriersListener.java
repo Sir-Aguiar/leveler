@@ -5,6 +5,7 @@ import org.aguiar.leveler.utils.DungeonConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +16,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +49,7 @@ public class DefineBarriersListener implements Listener {
 
     DungeonConfiguration dungeonConfiguration = new DungeonConfiguration(plugin, dungeonId);
 
-    if (dungeonConfiguration.loadConfig("config")) {
+    if (dungeonConfiguration.loadConfig("levels")) {
       String configName = "level_" + dungeonLevel + "_barriers";
       List<Map<String, Object>> levelBarriers = (List<Map<String, Object>>) dungeonConfiguration.getConfig().getList(configName);
 
@@ -55,8 +57,15 @@ public class DefineBarriersListener implements Listener {
         levelBarriers = new ArrayList<>();
       }
 
-      Location clickedLocation = event.getClickedBlock().getLocation();
-      Map<String, Object> newBarrier = Map.of("x", clickedLocation.getX(), "y", clickedLocation.getY(), "z", clickedLocation.getZ());
+      Location clickedPosition = event.getClickedBlock().getLocation();
+
+      player.sendMessage(String.format("X: %.1f, Y: %.1f, Z: %.1f", clickedPosition.getX(), clickedPosition.getY(), clickedPosition.getZ()));
+
+      Map<String, Object> newBarrier = new HashMap<>();
+
+      newBarrier.put("x", clickedPosition.getX());
+      newBarrier.put("y", clickedPosition.getY());
+      newBarrier.put("z", clickedPosition.getZ());
 
       if (editMode.equalsIgnoreCase("set")) {
         levelBarriers = new ArrayList<>();
@@ -67,6 +76,8 @@ public class DefineBarriersListener implements Listener {
         levelBarriers.add(newBarrier);
         player.sendMessage(ChatColor.GREEN + "Nova barreira adicionada ao nível " + dungeonLevel);
       }
+
+      System.out.println(levelBarriers);
 
       dungeonConfiguration.getConfig().set(configName, levelBarriers);
       dungeonConfiguration.saveConfig();

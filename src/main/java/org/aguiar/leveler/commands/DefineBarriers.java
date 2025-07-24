@@ -1,7 +1,9 @@
 package org.aguiar.leveler.commands;
 
 import org.aguiar.leveler.Leveler;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

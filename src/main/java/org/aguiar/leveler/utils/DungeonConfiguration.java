@@ -62,6 +62,8 @@ public class DungeonConfiguration {
 
     try {
       getConfig().save(configFile);
+      plugin.getLogger().info("Arquivo de configuração salvo em: " + configFile.getAbsolutePath());
+
     } catch (IOException ex) {
       plugin.getLogger().log(Level.SEVERE, "Não foi possível salvar a configuração da dungeon " + dungeonId, ex);
     }

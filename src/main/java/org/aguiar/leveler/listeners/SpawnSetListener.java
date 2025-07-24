@@ -38,10 +38,7 @@ public class SpawnSetListener implements Listener {
 
     Location clickedPosition = event.getClickedBlock().getLocation();
 
-    if (itemInHand == null) {
-      player.sendMessage(String.format("X: %.1f, Y: %.1f, Z: %.1f", clickedPosition.getX(), clickedPosition.getY(), clickedPosition.getZ()));
-      return;
-    }
+    if (itemInHand == null) return;
 
     Material itemMaterial = itemInHand.getType();
 

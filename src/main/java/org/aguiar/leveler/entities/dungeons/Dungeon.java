@@ -18,6 +18,7 @@ import org.aguiar.leveler.entities.raids.RaidMob;
 import org.aguiar.leveler.utils.DungeonConfiguration;
 import org.aguiar.leveler.utils.WorldsManager;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
@@ -42,6 +43,7 @@ public abstract class Dungeon {
   private final Location spawnLocation;
   private Clipboard schem;
   private boolean raidStarted = false;
+  private Integer raidProgression = 0;
 
   public Dungeon(String dungeonId, Leveler plugin, Player player) {
     this.plugin = plugin;
@@ -106,7 +108,7 @@ public abstract class Dungeon {
     World createdWorld = WorldsManager.createWorld(worldName);
 
     createdWorld.setMetadata("dungeonId", new FixedMetadataValue(plugin, getDungeonId()));
-    createdWorld.setMetadata("raidProgression", new FixedMetadataValue(plugin, 0));
+    createdWorld.setMetadata("raidProgression", new FixedMetadataValue(plugin, raidProgression));
 
     createdWorld.setGameRule(GameRule.DO_PATROL_SPAWNING, false);
     createdWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);
@@ -119,9 +121,6 @@ public abstract class Dungeon {
 
   public void startRaid() {
     if (levelsConfig.loadConfig("levels")) {
-      // Pegar a fase da respectiva raid
-      Integer raidProgression = world.getMetadata("raidProgression").stream().findFirst().map(MetadataValue::asInt).get();
-
       // Mapear os mobs
       List<Map<String, Object>> mobs = (List<Map<String, Object>>) levelsConfig.getConfig().getList("level_" + (raidProgression + 1) + "_raid.mobs");
       List<RaidMob> raidMobs = new ArrayList<>();
@@ -148,8 +147,7 @@ public abstract class Dungeon {
   }
 
   public void upgradeRaid() {
-    int currentProgression = world.getMetadata("raidProgression").stream().findFirst().map(MetadataValue::asInt).orElse(0);
-    int newProgression = currentProgression + 1;
+    int newProgression = raidProgression + 1;
 
     Integer dungeonLevels = dungeonConfig.getConfig().getInt("levels");
 
@@ -160,31 +158,29 @@ public abstract class Dungeon {
     }
 
     if (newProgression <= dungeonLevels) {
-      world.setMetadata("raidProgression", new FixedMetadataValue(plugin, newProgression));
+      setRaidProgression(newProgression);
+      removeLevelBarriers(raidProgression);
       setRaidStarted(false);
-      player.sendMessage(ChatColor.GREEN + "Raid atualizada para o nível " + (newProgression + 1));
+      player.sendMessage(ChatColor.GREEN + "Raid atualizada para o nível " + (newProgression));
     } else {
       player.sendMessage(ChatColor.RED + "Você já está no nível máximo da raid.");
     }
   }
 
-  public void upgradeRaid(int amount) {
-    int currentProgression = world.getMetadata("raidProgression").stream().findFirst().map(MetadataValue::asInt).orElse(0);
-    int newProgression = currentProgression + amount;
+  public void removeLevelBarriers(int lvl) {
+    List<Map<String, Double>> barriers = (List<Map<String, Double>>) levelsConfig.getConfig().getList("level_" + lvl + "_barriers");
+    if (barriers == null) return;
 
-    ConfigurationSection dungeonLevels = dungeonConfig.getConfig().getConfigurationSection("levels");
+    barriers.forEach(barrier -> {
+      double x = barrier.get("x");
+      double y = barrier.get("y");
+      double z = barrier.get("z");
 
-    if (dungeonLevels == null) {
-      player.sendMessage(ChatColor.RED + "Configuração de níveis da dungeon não encontrada.");
-      return;
-    }
-
-    if (newProgression < dungeonLevels.getKeys(false).size()) {
-      world.setMetadata("raidProgression", new FixedMetadataValue(plugin, newProgression));
-      player.sendMessage(ChatColor.GREEN + "Raid atualizada para o nível " + (newProgression + 1));
-    } else {
-      player.sendMessage(ChatColor.RED + "Você já está no nível máximo da raid.");
-    }
+      Location barrierLocation = new Location(world, x, y, z);
+      Block barrierBlock = barrierLocation.getBlock();
+      System.out.println(barrierBlock.getType());
+      barrierBlock.setType(Material.AIR);
+    });
   }
 
   public boolean isRaidStarted() {
@@ -221,5 +217,14 @@ public abstract class Dungeon {
 
   public DungeonConfiguration getLevelsConfig() {
     return levelsConfig;
+  }
+
+  public Integer getRaidProgression() {
+    return raidProgression;
+  }
+
+  public void setRaidProgression(Integer newValue) {
+    raidProgression = newValue;
+    world.setMetadata("raidProgression", new FixedMetadataValue(plugin, newValue));
   }
 }
