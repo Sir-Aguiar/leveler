@@ -131,6 +131,7 @@ public abstract class Dungeon {
 
       mobs.forEach(mob -> {
         RaidMob raidMob = new RaidMob((String) mob.get("name"), (String) mob.get("mobClass"), (String) mob.get("entityType"), playerLocationMap);
+        raidMob.loadEquipments((Map<String, Object>) mob.get("equipment"));
         raidMobs.add(raidMob);
       });
 

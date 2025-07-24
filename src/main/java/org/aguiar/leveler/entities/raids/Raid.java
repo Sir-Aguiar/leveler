@@ -1,15 +1,18 @@
 package org.aguiar.leveler.entities.raids;
 
 import org.aguiar.leveler.Leveler;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Raid {
   private final Leveler plugin;
@@ -26,8 +29,9 @@ public class Raid {
 
     Monster spawnedEntity = (Monster) world.spawnEntity(location, raidMob.getEntityType());
     spawnedEntity.setCustomName(raidMob.getName());
-    /*raidMob.equipments().forEach((slot, mobEquipment) -> {
-      ItemStack itemStack = new ItemStack(Objects.requireNonNull(Material.getMaterial(mobEquipment.material())), 1);
+
+    raidMob.getEquipments().forEach((slot, mobEquipment) -> {
+      ItemStack itemStack = new ItemStack(mobEquipment.material(), 1);
 
       ItemMeta itemMeta = itemStack.getItemMeta();
 
@@ -37,14 +41,12 @@ public class Raid {
       itemMeta.setLore(mobEquipment.lore());
       itemStack.setItemMeta(itemMeta);
 
-      EquipmentSlot equipmentSlot = EquipmentSlot.valueOf(slot);
-
-      mobEquipment.enchantments().forEach((enchantment, integer) -> {
-        itemStack.addEnchantment(Objects.requireNonNull(Registry.ENCHANTMENT.get(NamespacedKey.minecraft(enchantment))), integer);
+      mobEquipment.enchantments().forEach((enchantment, level) -> {
+        itemStack.addEnchantment(enchantment, level);
       });
 
-      Objects.requireNonNull(spawnedEntity.getEquipment()).setItem(equipmentSlot, itemStack);
-    });*/
+      Objects.requireNonNull(spawnedEntity.getEquipment()).setItem(slot, itemStack);
+    });
 
 
     spawnedEntity.setMetadata("isRaid", new FixedMetadataValue(plugin, true));
