@@ -19,6 +19,9 @@ import org.aguiar.leveler.utils.DungeonConfiguration;
 import org.aguiar.leveler.utils.WorldsManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
@@ -42,6 +45,8 @@ public abstract class Dungeon {
   private final World world;
   private final Location spawnLocation;
   private Clipboard schem;
+  private BossBar bossBar;
+
   private boolean raidStarted = false;
   private Integer raidProgression = 0;
 
@@ -70,6 +75,7 @@ public abstract class Dungeon {
 
   public void teleportPlayer(Player player) {
     WorldsManager.loadPlayers(player, spawnLocation);
+    bossBar.addPlayer(player);
   }
 
   public void teleportPlayer(List<Player> players) {
@@ -116,6 +122,8 @@ public abstract class Dungeon {
 
     createdWorld.setTime(24000);
 
+    setupBossBar();
+
     return createdWorld;
   }
 
@@ -142,7 +150,7 @@ public abstract class Dungeon {
       });
 
       setRaidStarted(true);
-      player.sendMessage(ChatColor.GOLD + "Raid Iniciada");
+      setBossBarStyle();
     }
   }
 
@@ -161,10 +169,32 @@ public abstract class Dungeon {
       setRaidProgression(newProgression);
       removeLevelBarriers(raidProgression);
       setRaidStarted(false);
-      player.sendMessage(ChatColor.GREEN + "Raid atualizada para o nível " + (newProgression));
+      setBossBarStyle();
     } else {
       player.sendMessage(ChatColor.RED + "Você já está no nível máximo da raid.");
     }
+  }
+
+  private void setupBossBar() {
+    if (bossBar == null) bossBar = Bukkit.createBossBar("", BarColor.GREEN, BarStyle.SOLID);
+
+    if (bossBar.getTitle().isEmpty()) setBossBarStyle();
+
+    bossBar.setVisible(true);
+  }
+
+  private void setBossBarStyle() {
+    String title;
+
+    if (isRaidStarted()) {
+      title = String.format("%sRaid em andamento", ChatColor.RED);
+    } else {
+      title = String.format("%sNível de Masmorra: %s%d", ChatColor.GREEN, ChatColor.YELLOW, raidProgression);
+    }
+
+    bossBar.setTitle(title);
+    bossBar.setColor(isRaidStarted() ? BarColor.RED : BarColor.GREEN);
+    bossBar.setStyle(BarStyle.SOLID);
   }
 
   public void removeLevelBarriers(int lvl) {
