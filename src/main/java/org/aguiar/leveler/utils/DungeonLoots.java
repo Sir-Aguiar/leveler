@@ -14,6 +14,6 @@ public interface DungeonLoots {
           1,
           1,
           0.1f,
-          Map.of(Enchantment.LUCK, 3, Enchantment.KNOCKBACK, 2)
+          Map.of(Enchantment.FORTUNE, 3, Enchantment.KNOCKBACK, 2)
   );
 }
