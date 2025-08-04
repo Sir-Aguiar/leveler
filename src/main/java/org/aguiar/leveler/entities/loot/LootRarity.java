@@ -1,4 +1,4 @@
-package org.aguiar.leveler.entities;
+package org.aguiar.leveler.entities.loot;
 
 public enum LootRarity {
   COMMON, UNCOMMON, RARE, EPIC, LEGENDARY, MYTHIC, DIVINE;

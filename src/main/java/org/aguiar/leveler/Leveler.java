@@ -62,6 +62,7 @@ public final class Leveler extends JavaPlugin {
     Objects.requireNonNull(this.getCommand("killer-bone")).setExecutor(new GetEntityKiller());
     Objects.requireNonNull(this.getCommand("new-world")).setExecutor(new NewWorld(this));
     Objects.requireNonNull(this.getCommand("define-barriers")).setExecutor(new DefineBarriers(this));
+    Objects.requireNonNull(this.getCommand("redeem-reward")).setExecutor(new RedeemReward(this));
   }
 
   public void startDatabase() {

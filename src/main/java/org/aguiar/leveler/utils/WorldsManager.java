@@ -3,6 +3,7 @@ package org.aguiar.leveler.utils;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.io.File;
 import java.io.IOException;

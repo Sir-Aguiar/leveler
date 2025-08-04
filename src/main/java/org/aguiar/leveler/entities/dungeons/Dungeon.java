@@ -75,6 +75,7 @@ public abstract class Dungeon {
 
   public void teleportPlayer(Player player) {
     WorldsManager.loadPlayers(player, spawnLocation);
+
     bossBar.addPlayer(player);
   }
 

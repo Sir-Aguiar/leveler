@@ -1,12 +1,12 @@
-package org.aguiar.leveler.entities;
+package org.aguiar.leveler.entities.loot;
 
 public enum LootClass {
-  ATTRIBUTES, ITEM, CONSUMABLE;
+  RESOURCE, EQUIPMENT, CONSUMABLE;
 
   public static LootClass fromString(String lootClass) {
     return switch (lootClass.toUpperCase()) {
-      case "ATTRIBUTES" -> ATTRIBUTES;
-      case "ITEM" -> ITEM;
+      case "RESOURCE" -> RESOURCE;
+      case "EQUIPMENT" -> EQUIPMENT;
       case "CONSUMABLE" -> CONSUMABLE;
       default -> throw new IllegalArgumentException("Unknown loot class: " + lootClass);
     };
